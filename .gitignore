@@ -1,0 +1,20 @@
+# native libraries and test database
+database/
+lib/
+
+# ide files
+.classpath
+.idea/
+.project
+.settings/
+.vscode/
+
+# macOS stuff
+.DS_Store
+
+# build folders
+target/
+dist/
+
+# test outputs
+*.log
