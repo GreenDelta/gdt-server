@@ -9,16 +9,15 @@ import com.google.gson.JsonObject;
 import io.javalin.http.Context;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.io.DbEntityResolver;
-import org.openlca.core.math.SystemCalculator;
 import org.openlca.core.model.descriptors.ImpactDescriptor;
-import org.openlca.core.results.FlowValue;
+import org.openlca.core.results.EnviFlowValue;
 import org.openlca.core.results.ImpactValue;
 import org.openlca.core.results.LcaResult;
 import org.openlca.core.results.TagResult;
 import org.openlca.core.services.CalculationQueue;
 import org.openlca.core.services.JsonCalculationSetup;
 import org.openlca.jsonld.Json;
-import org.openlca.jsonld.output.DbRefs;
+import org.openlca.jsonld.output.JsonRefs;
 
 class ResultService {
 
@@ -68,8 +67,8 @@ class ResultService {
 			Http.sendOk(ctx, new JsonArray());
 			return;
 		}
-		var impacts = result.getTotalImpactResults();
-		var refs = DbRefs.of(db);
+		var impacts = result.getTotalImpacts();
+		var refs = JsonRefs.of(db);
 		var array = encodeArray(impacts, i -> encodeImpact(i, refs));
 		Http.sendOk(ctx, array);
 	}
@@ -133,7 +132,7 @@ class ResultService {
 		return array;
 	}
 
-	private JsonObject encode(FlowValue r) {
+	private JsonObject encode(EnviFlowValue r) {
 		if (r == null)
 			return null;
 		JsonObject obj = new JsonObject();
@@ -144,7 +143,7 @@ class ResultService {
 		return obj;
 	}
 
-	private JsonObject encodeImpact(ImpactValue r, DbRefs refs) {
+	private JsonObject encodeImpact(ImpactValue r, JsonRefs refs) {
 		if (r == null)
 			return null;
 		JsonObject obj = new JsonObject();

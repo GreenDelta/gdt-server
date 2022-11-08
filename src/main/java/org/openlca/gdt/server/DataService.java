@@ -43,8 +43,8 @@ import org.openlca.jsonld.input.ResultReader;
 import org.openlca.jsonld.input.SocialIndicatorReader;
 import org.openlca.jsonld.input.SourceReader;
 import org.openlca.jsonld.input.UnitGroupReader;
-import org.openlca.jsonld.output.DbRefs;
 import org.openlca.jsonld.output.JsonExport;
+import org.openlca.jsonld.output.JsonRefs;
 import org.openlca.util.Strings;
 
 import java.util.Objects;
@@ -63,7 +63,7 @@ class DataService {
 		if (type == null)
 			return;
 		var descriptors = db.getDescriptors(type);
-		var refs = DbRefs.of(db);
+		var refs = JsonRefs.of(db);
 		var array = new JsonArray();
 		for (var d : descriptors) {
 			var ref = refs.asRef(d);
@@ -102,7 +102,7 @@ class DataService {
 			Http.sendNotFound(ctx, "No dataset found for the given ID");
 			return;
 		}
-		var refs = DbRefs.of(db);
+		var refs = JsonRefs.of(db);
 		Http.sendOk(ctx, refs.asRef(info));
 	}
 
