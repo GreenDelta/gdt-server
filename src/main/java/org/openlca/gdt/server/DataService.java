@@ -29,6 +29,14 @@ class DataService {
 		Http.respond(ctx, resp);
 	}
 
+	void getAll(Context ctx) {
+		var type = DataRequest.resolveType(ctx);
+		if (type == null)
+			return;
+		var resp = service.getAll(type);
+		Http.respond(ctx, resp);
+	}
+
 	void getForName(Context ctx) {
 		var type = DataRequest.resolveType(ctx);
 		if (type == null)

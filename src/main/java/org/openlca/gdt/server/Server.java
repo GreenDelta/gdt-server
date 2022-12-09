@@ -28,6 +28,7 @@ public class Server {
 		app.get("/data/providers", data::getProviders);
 		app.get("/data/providers/{id}", data::getProvidersOfFlow);
 		app.get("/data/{type-path}", data::getDescriptors);
+		app.get("/data/{type-path}/all", data::getAll);
 		app.get("/data/{type-path}/name/<name>", data::getForName);
 		app.get("/data/{type-path}/{id}", data::get);
 		app.get("/data/{type-path}/{id}/info", data::getDescriptor);
