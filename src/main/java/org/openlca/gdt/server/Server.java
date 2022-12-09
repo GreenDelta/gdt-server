@@ -24,9 +24,9 @@ public class Server {
 		}).start(config.port());
 
     // get data
-    app.get("/data/{type-path}", data::getInfos);
+    app.get("/data/{type-path}", data::getDescriptors);
     app.get("/data/{type-path}/{id}", data::get);
-    app.get("/data/{type-path}/{id}/info", data::getInfo);
+    app.get("/data/{type-path}/{id}/info", data::getDescriptor);
 		app.get("/data/{type-path}/{id}/parameters", data::getParameters);
 
 		// put & delete data

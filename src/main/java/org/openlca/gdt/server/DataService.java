@@ -1,6 +1,5 @@
 package org.openlca.gdt.server;
 
-import com.google.gson.JsonArray;
 import io.javalin.http.Context;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.io.DbEntityResolver;
@@ -23,6 +22,7 @@ import org.openlca.core.model.RootEntity;
 import org.openlca.core.model.SocialIndicator;
 import org.openlca.core.model.Source;
 import org.openlca.core.model.UnitGroup;
+import org.openlca.core.services.JsonDataService;
 import org.openlca.jsonld.Json;
 import org.openlca.jsonld.MemStore;
 import org.openlca.jsonld.input.ActorReader;
@@ -44,111 +44,61 @@ import org.openlca.jsonld.input.SocialIndicatorReader;
 import org.openlca.jsonld.input.SourceReader;
 import org.openlca.jsonld.input.UnitGroupReader;
 import org.openlca.jsonld.output.JsonExport;
-import org.openlca.jsonld.output.JsonRefs;
-import org.openlca.util.Strings;
 
 import java.util.Objects;
-import java.util.UUID;
 
 class DataService {
 
 	private final IDatabase db;
+	private final JsonDataService service;
 
 	DataService(IDatabase db) {
 		this.db = db;
+		this.service = new JsonDataService(db);
 	}
 
-	void getInfos(Context ctx) {
+	void getDescriptors(Context ctx) {
 		var type = DataRequest.resolveType(ctx);
 		if (type == null)
 			return;
-		var descriptors = db.getDescriptors(type);
-		var refs = JsonRefs.of(db);
-		var array = new JsonArray();
-		for (var d : descriptors) {
-			var ref = refs.asRef(d);
-			array.add(ref);
-		}
-		Http.sendOk(ctx, array);
+		var resp = service.getDescriptors(type);
+		Http.respond(ctx, resp);
 	}
 
 	void get(Context ctx) {
 		var ref = DataRequest.resolveEntity(ctx);
 		if (ref == null)
 			return;
-
-		var entity = db.get(ref.type(), ref.id());
-		if (entity == null) {
-			Http.sendNotFound(ctx, "No dataset found for the given ID");
-			return;
-		}
-		var json = new JsonExport(db, new MemStore())
-				.withReferences(false)
-				.getWriter(entity)
-				.write(entity);
-		if (json != null) {
-			Http.sendOk(ctx, json);
-		} else {
-			Http.sendServerError(ctx, "Failed to convert: " + entity);
-		}
+		var resp = service.get(ref.type(), ref.id());
+		Http.respond(ctx, resp);
 	}
 
-	void getInfo(Context ctx) {
+	void getDescriptor(Context ctx) {
 		var ref = DataRequest.resolveEntity(ctx);
 		if (ref == null)
 			return;
-		var info = db.getDescriptor(ref.type(), ref.id());
-		if (info == null) {
-			Http.sendNotFound(ctx, "No dataset found for the given ID");
-			return;
-		}
-		var refs = JsonRefs.of(db);
-		Http.sendOk(ctx, refs.asRef(info));
+		var resp = service.getDescriptor(ref.type(), ref.id());
+		Http.respond(ctx, resp);
 	}
 
-	/**
-	 * Creates or updates a dataset.
-	 */
-	<T extends RootEntity> void put(Context ctx) {
-
-		Class<T> type = DataRequest.resolveType(ctx);
+	void put(Context ctx) {
+		var type = DataRequest.resolveType(ctx);
 		if (type == null)
 			return;
-		EntityReader<T> reader = readerOf(type);
-		if (reader == null) {
-			Http.sendServerError(ctx,
-					"Does not know how to read instances of " + type);
-			return;
-		}
-
 		var json = Http.readBodyOf(ctx);
 		if (json == null)
 			return;
-
-		var id = Json.getString(json, "@id");
-		T entity = Strings.notEmpty(id)
-				? db.get(type, id)
-				: null;
-
-		if (entity != null) {
-			reader.update(entity, json);
-			db.update(entity);
-		} else {
-
-			// add an ID, if not provided
-			if (Strings.nullOrEmpty(id)) {
-				Json.put(json, "@id", UUID.randomUUID().toString());
-			}
-
-			entity = reader.read(json);
-			if (entity == null) {
-				Http.sendBadRequest(ctx, "failed to read object");
-				return;
-			}
-			db.insert(entity);
+		if (!json.isJsonObject()) {
+			Http.sendBadRequest(ctx, "not an object provided");
+			return;
+		}
+		var obj = json.getAsJsonObject();
+		if (Json.getString(obj, "@type") == null) {
+			obj.addProperty("@type", type.getSimpleName());
 		}
 
-		Http.sendOk(ctx, Json.asRef(entity));
+		var resp = service.put(obj);
+		Http.respond(ctx, resp);
 	}
 
 	void getParameters(Context ctx) {
