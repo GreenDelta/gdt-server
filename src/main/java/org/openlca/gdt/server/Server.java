@@ -86,6 +86,15 @@ public class Server {
 		app.get("/result/{id}/flow-impact-values-of/{impact-category}", results::getFlowImpactValuesOf);
 		// endregion
 
+		// region: cost results
+		app.get("/result/{id}/total-costs", results::getTotalCosts);
+		app.get("/result/{id}/direct-cost-values", results::getDirectCostValues);
+		app.get("/result/{id}/total-cost-values", results::getTotalCostValues);
+		app.get("/result/{id}/direct-costs-of/{tech-flow}", results::getDirectCostsOf);
+		app.get("/result/{id}/total-costs-of-one/{tech-flow}", results::getTotalCostsOfOne);
+		app.get("/result/{id}/total-costs-of/{tech-flow}", results::getTotalCostsOf);
+		// endregion
+
 		// register a shutdown hook for closing database and server
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {

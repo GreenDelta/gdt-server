@@ -265,4 +265,48 @@ class ResultService {
 	}
 
 	// endregion
+
+	// region: cost results
+
+	void getTotalCosts(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getTotalCosts(id);
+		Http.respond(ctx, r);
+	}
+
+	void getDirectCostValues(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getDirectCostValues(id);
+		Http.respond(ctx, r);
+	}
+
+	void getTotalCostValues(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getTotalCostValues(id);
+		Http.respond(ctx, r);
+	}
+
+	void getDirectCostsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getDirectCostsOf(id, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	void getTotalCostsOfOne(Context ctx) {
+		var id = ctx.pathParam("id");
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getTotalCostsOfOne(id, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	void getTotalCostsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getTotalCostsOf(id, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	// endregion
+
 }
