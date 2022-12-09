@@ -16,6 +16,7 @@ import org.openlca.core.results.LcaResult;
 import org.openlca.core.results.TagResult;
 import org.openlca.core.services.CalculationQueue;
 import org.openlca.core.services.JsonCalculationSetup;
+import org.openlca.core.services.ServerConfig;
 import org.openlca.jsonld.Json;
 import org.openlca.jsonld.output.JsonRefs;
 
@@ -24,10 +25,10 @@ class ResultService {
 	private final IDatabase db;
 	private final CalculationQueue queue;
 
-	ResultService(Args args) {
-		this.db = args.db();
+	ResultService(ServerConfig config) {
+		this.db = config.db();
 		this.queue = new CalculationQueue(db, 2)
-				.withLibraryDir(args.dataDir().getLibraryDir());
+				.withLibraryDir(config.dataDir().getLibraryDir());
 	}
 
 	void calculate(Context ctx) {

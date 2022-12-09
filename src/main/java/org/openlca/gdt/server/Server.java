@@ -2,25 +2,26 @@ package org.openlca.gdt.server;
 
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
+import org.openlca.core.services.ServerConfig;
 
 public class Server {
 
   public static void main(String[] sysArgs) {
 
-		var args = Args.parse(sysArgs);
+		var config = ServerConfig.parse(sysArgs);
 
-    var db = args.db();
+    var db = config.db();
 
     var data = new DataService(db);
-    var results = new ResultService(args);
+    var results = new ResultService(config);
 
-    var app = Javalin.create(config -> {
-			if (args.staticDir() != null) {
-				config.addStaticFiles(
-						args.staticDir().getAbsolutePath(), Location.EXTERNAL);
+    var app = Javalin.create(c -> {
+			if (config.staticDir() != null) {
+				c.addStaticFiles(
+						config.staticDir().getAbsolutePath(), Location.EXTERNAL);
 			}
-			config.enableCorsForAllOrigins();
-		}).start(args.port());
+			c.enableCorsForAllOrigins();
+		}).start(config.port());
 
     // get data
     app.get("/data/{type-path}", data::getInfos);
@@ -29,7 +30,7 @@ public class Server {
 		app.get("/data/{type-path}/{id}/parameters", data::getParameters);
 
 		// put & delete data
-		if (!args.isReadonly()) {
+		if (!config.isReadonly()) {
 			app.put("/data/{type-path}", data::put);
 			app.delete("/data/{type-path}/{id}", data::delete);
 		}
