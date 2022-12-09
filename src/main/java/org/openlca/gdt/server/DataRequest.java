@@ -29,18 +29,29 @@ class DataRequest {
 		var type = resolveType(ctx);
 		if (type == null)
 			return null;
-
-		var id = ctx.pathParam("id");
-		if (Strings.nullOrEmpty(id)) {
-			Http.sendBadRequest(ctx, "No ID provided");
-			return null;
-		}
-		return (EntityId<T>) new EntityId<>(type, id);
+		var id = resolveId(ctx);
+		return id != null
+				? (EntityId<T>) new EntityId<>(type, id)
+				: null;
 	}
 
 	/**
-	 * Returns the type for the given path segment. Writes an error to the context
-	 * if the type could not be resolved and returns {@code null} in this case.
+	 * Returns the {@code id} parameter of the given context path. Writes an error
+	 * to the context if no ID is provided and returns {@code null} in this case.
+	 */
+	static String resolveId(Context ctx) {
+		var id = ctx.pathParam("id");
+		if (Strings.nullOrEmpty(id)) {
+			Http.sendBadRequest(ctx, "no ID provided");
+			return null;
+		}
+		return id;
+	}
+
+	/**
+	 * Returns the matching entity type for the {@code type-path} parameter of
+	 * the given context path. Writes an error to the context if the type could
+	 * not be resolved and returns {@code null} in this case.
 	 */
 	@SuppressWarnings("unchecked")
 	static <T extends RootEntity> Class<T> resolveType(Context ctx) {

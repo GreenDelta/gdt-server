@@ -3,15 +3,12 @@ package org.openlca.gdt.server;
 import io.javalin.http.Context;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.services.JsonDataService;
-import org.openlca.jsonld.Json;
 
 class DataService {
 
-	private final IDatabase db;
 	private final JsonDataService service;
 
 	DataService(IDatabase db) {
-		this.db = db;
 		this.service = new JsonDataService(db);
 	}
 
@@ -54,6 +51,14 @@ class DataService {
 		Http.respond(ctx, resp);
 	}
 
+	void delete(Context ctx) {
+		var ref = DataRequest.resolveEntity(ctx);
+		if (ref == null)
+			return;
+		var resp = service.delete(ref.type(), ref.id());
+		Http.respond(ctx, resp);
+	}
+
 	void getParameters(Context ctx) {
 		var ref = DataRequest.resolveEntity(ctx);
 		if (ref == null)
@@ -62,19 +67,16 @@ class DataService {
 		Http.respond(ctx, resp);
 	}
 
-	void delete(Context ctx) {
-		var ref = DataRequest.resolveEntity(ctx);
-		if (ref == null)
-			return;
-
-
-		var entity = db.get(ref.type(), ref.id());
-		if (entity == null) {
-			Http.sendNotFound(ctx, "No dataset found for the given ID");
-			return;
-		}
-		db.delete(entity);
-		Http.sendOk(ctx, Json.asRef(entity));
+	void getProviders(Context ctx) {
+		var resp = service.getProviders();
+		Http.respond(ctx, resp);
 	}
 
+	void getProvidersOfFlow(Context ctx) {
+		var id = DataRequest.resolveId(ctx);
+		if (id == null)
+			return;
+		var resp = service.getProvidersOfFlow(id);
+		Http.respond(ctx, resp);
+	}
 }

@@ -6,16 +6,16 @@ import org.openlca.core.services.ServerConfig;
 
 public class Server {
 
-  public static void main(String[] sysArgs) {
+	public static void main(String[] sysArgs) {
 
 		var config = ServerConfig.parse(sysArgs);
 
-    var db = config.db();
+		var db = config.db();
 
-    var data = new DataService(db);
-    var results = new ResultService(config);
+		var data = new DataService(db);
+		var results = new ResultService(config);
 
-    var app = Javalin.create(c -> {
+		var app = Javalin.create(c -> {
 			if (config.staticDir() != null) {
 				c.addStaticFiles(
 						config.staticDir().getAbsolutePath(), Location.EXTERNAL);
@@ -23,10 +23,12 @@ public class Server {
 			c.enableCorsForAllOrigins();
 		}).start(config.port());
 
-    // get data
-    app.get("/data/{type-path}", data::getDescriptors);
-    app.get("/data/{type-path}/{id}", data::get);
-    app.get("/data/{type-path}/{id}/info", data::getDescriptor);
+		// get data
+		app.get("/data/providers", data::getProviders);
+		app.get("/data/providers/{id}", data::getProvidersOfFlow);
+		app.get("/data/{type-path}", data::getDescriptors);
+		app.get("/data/{type-path}/{id}", data::get);
+		app.get("/data/{type-path}/{id}/info", data::getDescriptor);
 		app.get("/data/{type-path}/{id}/parameters", data::getParameters);
 
 		// put & delete data
@@ -45,7 +47,7 @@ public class Server {
 		app.get("/results/{id}/total-impacts", results::getTotalImpacts);
 
 		// register a shutdown hook for closing database and server
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {
 				db.close();
 				app.close();
@@ -53,5 +55,5 @@ public class Server {
 				System.out.println("shutdown failed: " + e.getMessage());
 			}
 		}));
-  }
+	}
 }
