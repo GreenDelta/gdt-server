@@ -3,6 +3,7 @@ package org.openlca.gdt.server;
 import io.javalin.http.Context;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.services.JsonDataService;
+import org.openlca.util.Strings;
 
 class DataService {
 
@@ -25,6 +26,19 @@ class DataService {
 		if (ref == null)
 			return;
 		var resp = service.get(ref.type(), ref.id());
+		Http.respond(ctx, resp);
+	}
+
+	void getForName(Context ctx) {
+		var type = DataRequest.resolveType(ctx);
+		if (type == null)
+			return;
+		var name = ctx.pathParam("name");
+		if (Strings.nullOrEmpty(name)) {
+			Http.sendBadRequest(ctx, "no name provided");
+			return;
+		}
+		var resp = service.getForName(type, name);
 		Http.respond(ctx, resp);
 	}
 
