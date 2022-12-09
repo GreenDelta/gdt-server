@@ -67,7 +67,24 @@ public class Server {
 		app.get("/result/{id}/total-flow-of/{envi-flow}/{tech-flow}", results::getTotalFlowOf);
 		// endregion
 
+		// region: impact results
 		app.get("/results/{id}/total-impacts", results::getTotalImpacts);
+		app.get("/result/{id}/total-impact-value-of/{impact-category}", results::getTotalImpactValueOf);
+		app.get("/result/{id}/direct-impact-values-of/{impact-category}", results::getDirectImpactValuesOf);
+		app.get("/result/{id}/total-impact-values-of/{impact-category}", results::getTotalImpactValuesOf);
+		app.get("/result/{id}/direct-impacts-of/{tech-flow}", results::getDirectImpactsOf);
+		app.get("/result/{id}/direct-impact-of/{impact-category}/{tech-flow}", results::getDirectImpactOf);
+		app.get("/result/{id}/total-impacts-of-one/{tech-flow}", results::getTotalImpactsOfOne);
+		app.get("/result/{id}/total-impact-of-one/{impact-category}/{tech-flow}", results::getTotalImpactOfOne);
+		app.get("/result/{id}/total-impacts-of/{tech-flow}", results::getTotalImpactsOf);
+		app.get("/result/{id}/total-impact-of/{impact-category}/{tech-flow}", results::getTotalImpactOf);
+		app.get("/result/{id}/impact-factors-of/{impact-category}", results::getImpactFactorsOf);
+		app.get("/result/{id}/impact-factor-of/{impact-category}/{envi-flow}", results::getImpactFactorOf);
+		app.get("/result/{id}/flow-impacts-of-one/{envi-flow}", results::getFlowImpactsOfOne);
+		app.get("/result/{id}/flow-impacts-of/{envi-flow}", results::getFlowImpactsOf);
+		app.get("/result/{id}/flow-impact-of/{impact-category}/{envi-flow}", results::getFlowImpactOf);
+		app.get("/result/{id}/flow-impact-values-of/{impact-category}", results::getFlowImpactValuesOf);
+		// endregion
 
 		// register a shutdown hook for closing database and server
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
