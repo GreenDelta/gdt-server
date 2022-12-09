@@ -2,6 +2,7 @@ package org.openlca.gdt.server;
 
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
+import io.javalin.plugin.bundled.CorsPluginConfig;
 import org.openlca.core.services.ServerConfig;
 
 public class Server {
@@ -17,10 +18,10 @@ public class Server {
 
 		var app = Javalin.create(c -> {
 			if (config.staticDir() != null) {
-				c.addStaticFiles(
+				c.staticFiles.add(
 						config.staticDir().getAbsolutePath(), Location.EXTERNAL);
 			}
-			c.enableCorsForAllOrigins();
+			c.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
 		}).start(config.port());
 
 		// get data
