@@ -47,6 +47,26 @@ public class Server {
 		app.get("/results/{id}/state", results::getState);
 
 		// result queries
+		app.get("/result/{id}/tech-flows", results::getTechFlows);
+		app.get("/result/{id}/envi-flows", results::getEnviFlows);
+		app.get("/result/{id}/impact-categories", results::getImpactCategories);
+
+		app.get("/result/{id}/total-requirements", results::getTotalRequirements);
+		app.get("/result/{id}/total-requirements-of/{tech-flow}", results::getTotalRequirementsOf);
+
+		// region: flow results
+		app.get("/result/{id}/total-flows", results::getTotalFlows);
+		app.get("/result/{id}/total-flow-value-of/{envi-flow}", results::getTotalFlowValueOf);
+		app.get("/result/{id}/direct-flow-values-of/{envi-flow}", results::getDirectFlowValuesOf);
+		app.get("/result/{id}/total-flow-values-of/{envi-flow}", results::getTotalFlowValuesOf);
+		app.get("/result/{id}/direct-flows-of/{tech-flow}", results::getDirectFlowsOf);
+		app.get("/result/{id}/direct-flow-of/{envi-flow}/{tech-flow}", results::getDirectFlowOf);
+		app.get("/result/{id}/total-flows-of-one/{tech-flow}", results::getTotalFlowsOfOne);
+		app.get("/result/{id}/total-flow-of-one/{envi-flow}/{tech-flow}", results::getTotalFlowOfOne);
+		app.get("/result/{id}/total-flows-of/{tech-flow}", results::getTotalFlowsOf);
+		app.get("/result/{id}/total-flow-of/{envi-flow}/{tech-flow}", results::getTotalFlowOf);
+		// endregion
+
 		app.get("/results/{id}/total-impacts", results::getTotalImpacts);
 
 		// register a shutdown hook for closing database and server
