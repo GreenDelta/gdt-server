@@ -9,11 +9,11 @@ The routes for the methods under this group often take a `type` parameter that
 maps to a corresponding type of the
 [openLCA schema](https://greendelta.github.io/olca-schema/). The table below
 shows which values for this parameter map to which type of the openLCA schema.
-Multiple parameter values map to the same time, e.g. often the singular and
+Multiple parameter values can map to the same type, e.g. often the singular and
 plural form can be used.
 
 
-| Parameter                                                     | openLCA schema type                                                                      |
+| `type` value                                                  | openLCA schema type                                                                      |
 |---------------------------------------------------------------|------------------------------------------------------------------------------------------|
 | `actor `,  `actors `                                          | [Actor](https://greendelta.github.io/olca-schema/classes/Actor.html)                     |
 | `category `,  `categories `                                   | [Category](https://greendelta.github.io/olca-schema/classes/Category.html)               |
@@ -37,47 +37,103 @@ plural form can be used.
 
 ### `GET /data/{type}`
 
-This method returns the descriptors of all data sets of the given type from the
-database.
+Returns the descriptors of all data sets of the given type from the database.
 
 * Return type: [`List[Ref]`](https://greendelta.github.io/olca-schema/classes/Ref.html)
 
 
 ### `GET /data/{type}/{id}`
 
-This method returns the full data set of the given type and ID.
+Returns the full data set for the given type and ID.
+
+* Return type: [`E : RootEntity`](https://greendelta.github.io/olca-schema/classes/RootEntity.html)
+
+
+### `GET /data/{type}/name/{name}`
+
+Returns the full data set for the given type and name. Note that the name does
+not have to be unique in an openLCA database, and in this case, it will just
+return the first entity from the database with the given name.
 
 * Return type: [`E : RootEntity`](https://greendelta.github.io/olca-schema/classes/RootEntity.html)
 
 
 ### `GET /data/{type}/{id}/info`
 
+Returns the descriptor of the data set with the given type and ID.
 
+* Return type: [`Ref`](https://greendelta.github.io/olca-schema/classes/Ref.html)
 
-* returns the descriptor of the data set of the given type and ID
 
 ### `GET /data/{type}/{id}/parameters`
-* returns the parameters of the specified data set, this is only
-  valid for data set types that can have parameters or parameter
-  redefinitions
+
+Returns the (local) parameters of the specified data set. In case of processes
+and impact categories, a list of parameters is returned. For product systems,
+the respective parameter redefinitions are returned.
+
+* Return type:
+  * [`Parameter`](https://greendelta.github.io/olca-schema/classes/Parameter.html)
+    for processes and impact categories
+  * [`ParameterRedef`](https://greendelta.github.io/olca-schema/classes/ParameterRedef.html)
+    for product systems
+
+
+### `GET /data/providers`
+
+Returns the product and waste treatment providers from the database. A provider
+is a pair of process and product or process and waste flow for which results
+can be calculated or which can be linked in product systems.
+
+* Return type: [`List[TechFlow]`](https://greendelta.github.io/olca-schema/classes/TechFlow.html)
+
+
+### `GET /data/providers/{flow-id}`
+
+Returns the providers (see above) for a product or waste flow with the given ID.
+
+* Return type: [`List[TechFlow]`](https://greendelta.github.io/olca-schema/classes/TechFlow.html)
+
 
 ### `PUT /data/{type}`
-* inserts or updates the provided data set in the database; this method
-  is not available when the server runs in read-only mode
+
+Inserts or updates the provided data set in the database; this method is not
+available when the server runs in read-only mode.
+
+* Request body: [`E : RootEntity`](https://greendelta.github.io/olca-schema/classes/RootEntity.html)
+* Return type: [Ref](https://greendelta.github.io/olca-schema/classes/Ref.html)
+
 
 ### `DELETE /data/{type}/{id}`
-* deletes the specified data set from the database; this method is not
-  available when the server runs in read-only mode
+
+Deletes the specified data set from the database; this method is not available
+when the server runs in read-only mode.
+
+* Return type: [Ref](https://greendelta.github.io/olca-schema/classes/Ref.html)
+
+
+## Group `/results`
+
 
 ### `POST /results/calculate`
-* start a calculation for the provided setup, returns the calculation
-  state with the result ID
 
-### `DELETE | POST /results/{id}/dispose`
-* disposes the result with the given ID
+Schedules a new calculation for the provided calculation setup.
+
+* Request body: [CalculationSetup](https://greendelta.github.io/olca-schema/classes/CalculationSetup.html)
+* Return type: [ResultState](https://greendelta.github.io/olca-schema/classes/ResultState.html)
+
 
 ### `GET /results/{id}/state`
-* returns the calculation state of the result with the given ID
+
+Returns the state of a result with the given ID.
+
+* Return type: [ResultState](https://greendelta.github.io/olca-schema/classes/ResultState.html)
+
+
+### `DELETE /results/{id} | POST /results/{id}/dispose`
+
+Disposes the result with the given ID. It is important to call this method
+when a result is not needed anymore to free resources.
+
 
 ### `GET  /results/{id}/total-impacts`
 * returns the total LCIA result
