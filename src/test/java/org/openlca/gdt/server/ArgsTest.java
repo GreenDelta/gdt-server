@@ -6,6 +6,7 @@ import java.io.File;
 import java.nio.file.Files;
 
 import org.junit.Test;
+import org.openlca.core.services.ServerConfig;
 import org.openlca.util.Dirs;
 
 public class ArgsTest {
@@ -23,13 +24,13 @@ public class ArgsTest {
 				"-native", libDir.getAbsolutePath(),
 		};
 
-		var appArgs = Args.parse(args);
+		var conf = ServerConfig.parse(args);
 
-		assertEquals(rootDir, appArgs.dataDir().root());
-		assertEquals(7777, appArgs.port());
-		assertNotNull(appArgs.db());
-		assertEquals("testdb", appArgs.db().getName());
-		appArgs.db().close();
+		assertEquals(rootDir, conf.dataDir().root());
+		assertEquals(7777, conf.port());
+		assertNotNull(conf.db());
+		assertEquals("testdb", conf.db().getName());
+		conf.db().close();
 
 		Dirs.delete(rootDir);
 	}
