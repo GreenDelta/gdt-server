@@ -3,6 +3,10 @@ package org.openlca.gdt.server;
 import io.javalin.Javalin;
 import io.javalin.http.staticfiles.Location;
 import io.javalin.plugin.bundled.CorsPluginConfig;
+import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.HttpConfiguration;
+import org.eclipse.jetty.server.HttpConnectionFactory;
+import org.eclipse.jetty.server.ServerConnector;
 import org.openlca.core.services.ServerConfig;
 
 public class Server {
@@ -22,7 +26,20 @@ public class Server {
 						config.staticDir().getAbsolutePath(), Location.EXTERNAL);
 			}
 			c.plugins.enableCors(cors -> cors.add(CorsPluginConfig::anyHost));
-		}).start(config.port());
+			c.jetty.server(() -> {
+				var server = new org.eclipse.jetty.server.Server();
+				var httpConfig = new HttpConfiguration();
+				httpConfig.setRequestHeaderSize(16384);
+				httpConfig.setResponseHeaderSize(16384);
+				var connector = new ServerConnector(
+						server, new HttpConnectionFactory(httpConfig));
+				connector.setPort(config.port());
+				server.setConnectors(new Connector[] {connector});
+				return server;
+			});
+		}).start();
+
+		app.get("/api/version", Version::get);
 
 		// get data
 		app.get("/data/providers", data::getProviders);
