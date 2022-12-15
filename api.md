@@ -72,9 +72,9 @@ and impact categories, a list of parameters is returned. For product systems,
 the respective parameter redefinitions are returned.
 
 * Return type:
-  * [`Parameter`](https://greendelta.github.io/olca-schema/classes/Parameter.html)
+  * [`List[Parameter]`](https://greendelta.github.io/olca-schema/classes/Parameter.html)
     for processes and impact categories
-  * [`ParameterRedef`](https://greendelta.github.io/olca-schema/classes/ParameterRedef.html)
+  * [`List[ParameterRedef]`](https://greendelta.github.io/olca-schema/classes/ParameterRedef.html)
     for product systems
 
 
@@ -100,7 +100,7 @@ Inserts or updates the provided data set in the database; this method is not
 available when the server runs in read-only mode.
 
 * Request body: [`E : RootEntity`](https://greendelta.github.io/olca-schema/classes/RootEntity.html)
-* Return type: [Ref](https://greendelta.github.io/olca-schema/classes/Ref.html)
+* Return type: [`Ref`](https://greendelta.github.io/olca-schema/classes/Ref.html)
 
 
 ### `DELETE /data/{type}/{id}`
@@ -108,7 +108,7 @@ available when the server runs in read-only mode.
 Deletes the specified data set from the database; this method is not available
 when the server runs in read-only mode.
 
-* Return type: [Ref](https://greendelta.github.io/olca-schema/classes/Ref.html)
+* Return type: [`Ref`](https://greendelta.github.io/olca-schema/classes/Ref.html)
 
 
 ## Group `/results`
@@ -118,15 +118,15 @@ when the server runs in read-only mode.
 
 Schedules a new calculation for the provided calculation setup.
 
-* Request body: [CalculationSetup](https://greendelta.github.io/olca-schema/classes/CalculationSetup.html)
-* Return type: [ResultState](https://greendelta.github.io/olca-schema/classes/ResultState.html)
+* Request body: [`CalculationSetup`](https://greendelta.github.io/olca-schema/classes/CalculationSetup.html)
+* Return type: [`ResultState`](https://greendelta.github.io/olca-schema/classes/ResultState.html)
 
 
 ### `GET /results/{id}/state`
 
 Returns the state of a result with the given ID.
 
-* Return type: [ResultState](https://greendelta.github.io/olca-schema/classes/ResultState.html)
+* Return type: [`ResultState`](https://greendelta.github.io/olca-schema/classes/ResultState.html)
 
 
 ### `DELETE /results/{id} | POST /results/{id}/dispose`
@@ -136,4 +136,7 @@ when a result is not needed anymore to free resources.
 
 
 ### `GET  /results/{id}/total-impacts`
-* returns the total LCIA result
+
+Returns the total impact assessment result.
+
+* Return type: [`List[ImpactValue]`](https://greendelta.github.io/olca-schema/classes/ImpactValue.html)
