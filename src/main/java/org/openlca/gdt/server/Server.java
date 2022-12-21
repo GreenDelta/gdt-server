@@ -86,6 +86,8 @@ public class Server {
 
 		// region: impact results
 		app.get("/results/{id}/total-impacts", results::getTotalImpacts);
+		app.get("/results/{id}/total-impacts/normalized", results::getNormalizedImpacts);
+		app.get("/results/{id}/total-impacts/weighted", results::getWeightedImpacts);
 		app.get("/result/{id}/total-impact-value-of/{impact-category}", results::getTotalImpactValueOf);
 		app.get("/result/{id}/direct-impact-values-of/{impact-category}", results::getDirectImpactValuesOf);
 		app.get("/result/{id}/total-impact-values-of/{impact-category}", results::getTotalImpactValuesOf);

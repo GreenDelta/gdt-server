@@ -154,6 +154,18 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	void getNormalizedImpacts(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getNormalizedImpacts(id);
+		Http.respond(ctx, r);
+	}
+
+	void getWeightedImpacts(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getWeightedImpacts(id);
+		Http.respond(ctx, r);
+	}
+
 	void getTotalImpactValueOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var impactCategory = ctx.pathParam("impact-category");

@@ -140,3 +140,18 @@ when a result is not needed anymore to free resources.
 Returns the total impact assessment result.
 
 * Return type: [`List[ImpactValue]`](https://greendelta.github.io/olca-schema/classes/ImpactValue.html)
+
+
+### `GET  /results/{id}/total-impacts/normalized`
+
+Returns the total impact assessment result with normalization values applied.
+
+* Return type: [`List[ImpactValue]`](https://greendelta.github.io/olca-schema/classes/ImpactValue.html)
+
+
+### `GET  /results/{id}/total-impacts/weighted`
+
+Returns the total impact assessment result with normalization values and
+weighting factors applied.
+
+* Return type: [`List[ImpactValue]`](https://greendelta.github.io/olca-schema/classes/ImpactValue.html)
