@@ -58,10 +58,10 @@ public class Server {
 		}
 
 		// calculation & dispose
-		app.post("/results/calculate", results::calculate);
-		app.post("/results/{id}/dispose", results::dispose);
-		app.delete("/results/{id}", results::dispose);
-		app.get("/results/{id}/state", results::getState);
+		app.post("/result/calculate", results::calculate);
+		app.post("/result/{id}/dispose", results::dispose);
+		app.delete("/result/{id}", results::dispose);
+		app.get("/result/{id}/state", results::getState);
 
 		// result queries
 		app.get("/result/{id}/tech-flows", results::getTechFlows);
@@ -74,14 +74,13 @@ public class Server {
 		// region: flow results
 		app.get("/result/{id}/total-flows", results::getTotalFlows);
 		app.get("/result/{id}/total-flow-value-of/{envi-flow}", results::getTotalFlowValueOf);
-		app.get("/result/{id}/direct-flow-values-of/{envi-flow}", results::getDirectFlowValuesOf);
-		app.get("/result/{id}/total-flow-values-of/{envi-flow}", results::getTotalFlowValuesOf);
-		app.get("/result/{id}/direct-flows-of/{tech-flow}", results::getDirectFlowsOf);
-		app.get("/result/{id}/direct-flow-of/{envi-flow}/{tech-flow}", results::getDirectFlowOf);
-		app.get("/result/{id}/total-flows-of-one/{tech-flow}", results::getTotalFlowsOfOne);
-		app.get("/result/{id}/total-flow-of-one/{envi-flow}/{tech-flow}", results::getTotalFlowOfOne);
-		app.get("/result/{id}/total-flows-of/{tech-flow}", results::getTotalFlowsOf);
-		app.get("/result/{id}/total-flow-of/{envi-flow}/{tech-flow}", results::getTotalFlowOf);
+		app.get("/result/{id}/flow-contributions-of/{envi-flow}", results::getFlowContributionsOf);
+		app.get("/result/{id}/direct-interventions-of/{tech-flow}", results::getDirectInterventionsOf);
+		app.get("/result/{id}/direct-intervention-of/{envi-flow}/{tech-flow}", results::getDirectInterventionOf);
+		app.get("/result/{id}/flow-intensities-of/{tech-flow}", results::getFlowIntensitiesOf);
+		app.get("/result/{id}/flow-intensity-of/{envi-flow}/{tech-flow}", results::getFlowIntensityOf);
+		app.get("/result/{id}/total-interventions-of/{tech-flow}", results::getTotalInterventionsOf);
+		app.get("/result/{id}/total-intervention-of/{envi-flow}/{tech-flow}", results::getTotalInterventionOf);
 		// endregion
 
 		// region: impact results
@@ -89,28 +88,25 @@ public class Server {
 		app.get("/results/{id}/total-impacts/normalized", results::getNormalizedImpacts);
 		app.get("/results/{id}/total-impacts/weighted", results::getWeightedImpacts);
 		app.get("/result/{id}/total-impact-value-of/{impact-category}", results::getTotalImpactValueOf);
-		app.get("/result/{id}/direct-impact-values-of/{impact-category}", results::getDirectImpactValuesOf);
-		app.get("/result/{id}/total-impact-values-of/{impact-category}", results::getTotalImpactValuesOf);
+		app.get("/result/{id}/impact-contributions-of/{impact-category}", results::getImpactContributionsOf);
 		app.get("/result/{id}/direct-impacts-of/{tech-flow}", results::getDirectImpactsOf);
 		app.get("/result/{id}/direct-impact-of/{impact-category}/{tech-flow}", results::getDirectImpactOf);
-		app.get("/result/{id}/total-impacts-of-one/{tech-flow}", results::getTotalImpactsOfOne);
-		app.get("/result/{id}/total-impact-of-one/{impact-category}/{tech-flow}", results::getTotalImpactOfOne);
+		app.get("/result/{id}/impact-intensities-of/{tech-flow}", results::getImpactIntensitiesOf);
+		app.get("/result/{id}/impact-intensity-of/{impact-category}/{tech-flow}", results::getImpactIntensityOf);
 		app.get("/result/{id}/total-impacts-of/{tech-flow}", results::getTotalImpactsOf);
 		app.get("/result/{id}/total-impact-of/{impact-category}/{tech-flow}", results::getTotalImpactOf);
 		app.get("/result/{id}/impact-factors-of/{impact-category}", results::getImpactFactorsOf);
 		app.get("/result/{id}/impact-factor-of/{impact-category}/{envi-flow}", results::getImpactFactorOf);
-		app.get("/result/{id}/flow-impacts-of-one/{envi-flow}", results::getFlowImpactsOfOne);
-		app.get("/result/{id}/flow-impacts-of/{envi-flow}", results::getFlowImpactsOf);
+		app.get("/result/{id}/flow-impacts-of/{impact-category}", results::getFlowImpactsOf);
 		app.get("/result/{id}/flow-impact-of/{impact-category}/{envi-flow}", results::getFlowImpactOf);
-		app.get("/result/{id}/flow-impact-values-of/{impact-category}", results::getFlowImpactValuesOf);
 		// endregion
 
 		// region: cost results
 		app.get("/result/{id}/total-costs", results::getTotalCosts);
-		app.get("/result/{id}/direct-cost-values", results::getDirectCostValues);
+		app.get("/result/{id}/cost-contributions", results::getCostContributions);
 		app.get("/result/{id}/total-cost-values", results::getTotalCostValues);
 		app.get("/result/{id}/direct-costs-of/{tech-flow}", results::getDirectCostsOf);
-		app.get("/result/{id}/total-costs-of-one/{tech-flow}", results::getTotalCostsOfOne);
+		app.get("/result/{id}/cost-intensities-of/{tech-flow}", results::getCostIntensitiesOf);
 		app.get("/result/{id}/total-costs-of/{tech-flow}", results::getTotalCostsOf);
 		// endregion
 

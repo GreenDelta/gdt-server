@@ -85,62 +85,55 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
-	void getDirectFlowValuesOf(Context ctx) {
+	void getFlowContributionsOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
-		var r = service.getDirectFlowValuesOf(id, enviFlow);
+		var r = service.getFlowContributionsOf(id, enviFlow);
 		Http.respond(ctx, r);
 	}
 
-	void getTotalFlowValuesOf(Context ctx) {
-		var id = ctx.pathParam("id");
-		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
-		var r = service.getTotalFlowValuesOf(id, enviFlow);
-		Http.respond(ctx, r);
-	}
-
-	void getDirectFlowsOf(Context ctx) {
+	void getDirectInterventionsOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getDirectFlowsOf(id, techFlow);
+		var r = service.getDirectInterventionsOf(id, techFlow);
 		Http.respond(ctx, r);
 	}
 
-	void getDirectFlowOf(Context ctx) {
+	void getDirectInterventionOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getDirectFlowOf(id, enviFlow, techFlow);
+		var r = service.getDirectInterventionOf(id, enviFlow, techFlow);
 		Http.respond(ctx, r);
 	}
 
-	void getTotalFlowsOfOne(Context ctx) {
+	void getFlowIntensitiesOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalFlowsOfOne(id, techFlow);
+		var r = service.getFlowIntensitiesOf(id, techFlow);
 		Http.respond(ctx, r);
 	}
 
-	void getTotalFlowOfOne(Context ctx) {
-		var id = ctx.pathParam("id");
-		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
-		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalFlowOfOne(id, enviFlow, techFlow);
-		Http.respond(ctx, r);
-	}
-
-	void getTotalFlowsOf(Context ctx) {
-		var id = ctx.pathParam("id");
-		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalFlowsOf(id, techFlow);
-		Http.respond(ctx, r);
-	}
-
-	void getTotalFlowOf(Context ctx) {
+	void getFlowIntensityOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalFlowOf(id, enviFlow, techFlow);
+		var r = service.getFlowIntensityOf(id, enviFlow, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	void getTotalInterventionsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getTotalInterventionsOf(id, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	void getTotalInterventionOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getTotalInterventionOf(id, enviFlow, techFlow);
 		Http.respond(ctx, r);
 	}
 
@@ -173,17 +166,10 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
-	void getDirectImpactValuesOf(Context ctx) {
+	void getImpactContributionsOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var impactCategory = ctx.pathParam("impact-category");
-		var r = service.getDirectImpactValuesOf(id, impactCategory);
-		Http.respond(ctx, r);
-	}
-
-	void getTotalImpactValuesOf(Context ctx) {
-		var id = ctx.pathParam("id");
-		var impactCategory = ctx.pathParam("impact-category");
-		var r = service.getTotalImpactValuesOf(id, impactCategory);
+		var r = service.getImpactContributionsOf(id, impactCategory);
 		Http.respond(ctx, r);
 	}
 
@@ -202,18 +188,18 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
-	void getTotalImpactsOfOne(Context ctx) {
+	void getImpactIntensitiesOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalImpactsOfOne(id, techFlow);
+		var r = service.getImpactIntensitiesOf(id, techFlow);
 		Http.respond(ctx, r);
 	}
 
-	void getTotalImpactOfOne(Context ctx) {
+	void getImpactIntensityOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var impactCategory = ctx.pathParam("impact-category");
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalImpactOfOne(id, impactCategory, techFlow);
+		var r = service.getImpactIntensityOf(id, impactCategory, techFlow);
 		Http.respond(ctx, r);
 	}
 
@@ -247,17 +233,10 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
-	void getFlowImpactsOfOne(Context ctx) {
-		var id = ctx.pathParam("id");
-		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
-		var r = service.getFlowImpactsOfOne(id, enviFlow);
-		Http.respond(ctx, r);
-	}
-
 	void getFlowImpactsOf(Context ctx) {
 		var id = ctx.pathParam("id");
-		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
-		var r = service.getFlowImpactsOf(id, enviFlow);
+		var impactCategory = ctx.pathParam("impact-category");
+		var r = service.getFlowImpactsOf(id, impactCategory);
 		Http.respond(ctx, r);
 	}
 
@@ -266,13 +245,6 @@ class ResultService {
 		var impactCategory = ctx.pathParam("impact-category");
 		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
 		var r = service.getFlowImpactOf(id, impactCategory, enviFlow);
-		Http.respond(ctx, r);
-	}
-
-	void getFlowImpactValuesOf(Context ctx) {
-		var id = ctx.pathParam("id");
-		var impactCategory = ctx.pathParam("impact-category");
-		var r = service.getFlowImpactValuesOf(id, impactCategory);
 		Http.respond(ctx, r);
 	}
 
@@ -286,9 +258,9 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
-	void getDirectCostValues(Context ctx) {
+	void getCostContributions(Context ctx) {
 		var id = ctx.pathParam("id");
-		var r = service.getDirectCostValues(id);
+		var r = service.getCostContributions(id);
 		Http.respond(ctx, r);
 	}
 
@@ -305,10 +277,10 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
-	void getTotalCostsOfOne(Context ctx) {
+	void getCostIntensitiesOf(Context ctx) {
 		var id = ctx.pathParam("id");
 		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
-		var r = service.getTotalCostsOfOne(id, techFlow);
+		var r = service.getCostIntensitiesOf(id, techFlow);
 		Http.respond(ctx, r);
 	}
 
