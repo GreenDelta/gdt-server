@@ -54,6 +54,7 @@ public class Server {
 		// put & delete data
 		if (!config.isReadonly()) {
 			app.put("/data/{type-path}", data::put);
+			app.post("/data/create-system", data::createSystem);
 			app.delete("/data/{type-path}/{id}", data::delete);
 		}
 
@@ -64,6 +65,7 @@ public class Server {
 		app.get("/result/{id}/state", results::getState);
 
 		// result queries
+		app.get("/result/{id}/demand", results::getDemand);
 		app.get("/result/{id}/tech-flows", results::getTechFlows);
 		app.get("/result/{id}/envi-flows", results::getEnviFlows);
 		app.get("/result/{id}/impact-categories", results::getImpactCategories);
@@ -84,9 +86,9 @@ public class Server {
 		// endregion
 
 		// region: impact results
-		app.get("/results/{id}/total-impacts", results::getTotalImpacts);
-		app.get("/results/{id}/total-impacts/normalized", results::getNormalizedImpacts);
-		app.get("/results/{id}/total-impacts/weighted", results::getWeightedImpacts);
+		app.get("/result/{id}/total-impacts", results::getTotalImpacts);
+		app.get("/result/{id}/total-impacts/normalized", results::getNormalizedImpacts);
+		app.get("/result/{id}/total-impacts/weighted", results::getWeightedImpacts);
 		app.get("/result/{id}/total-impact-value-of/{impact-category}", results::getTotalImpactValueOf);
 		app.get("/result/{id}/impact-contributions-of/{impact-category}", results::getImpactContributionsOf);
 		app.get("/result/{id}/direct-impacts-of/{tech-flow}", results::getDirectImpactsOf);

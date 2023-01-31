@@ -3,6 +3,7 @@ package org.openlca.gdt.server;
 import io.javalin.http.Context;
 import org.openlca.core.database.IDatabase;
 import org.openlca.core.services.JsonDataService;
+import org.openlca.jsonld.Json;
 import org.openlca.util.Strings;
 
 class DataService {
@@ -71,6 +72,21 @@ class DataService {
 		}
 		var resp = service.put(type, json.getAsJsonObject());
 		Http.respond(ctx, resp);
+	}
+
+	void createSystem(Context ctx) {
+		var json = Http.readBodyOf(ctx);
+		if (json == null)
+			return;
+		if (!json.isJsonObject()) {
+			Http.sendBadRequest(ctx, "not an object provided");
+			return;
+		}
+		var obj = json.getAsJsonObject();
+		var processId = Json.getRefId(obj, "process");
+		var config = Json.getObject(obj, "config");
+		var rsp = service.createProductSystem(processId, config);
+		Http.respond(ctx, rsp);
 	}
 
 	void delete(Context ctx) {

@@ -39,6 +39,12 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	void getDemand(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getDemand(id);
+		Http.respond(ctx, r);
+	}
+
 	void getTechFlows(Context ctx) {
 		var id = ctx.pathParam("id");
 		var r = service.getTechFlows(id);
