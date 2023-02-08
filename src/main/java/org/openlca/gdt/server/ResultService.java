@@ -11,8 +11,7 @@ class ResultService {
 	private final JsonResultService service;
 
 	ResultService(ServerConfig config) {
-		// TODO: configure possible thread count
-		this.service = JsonResultService.of(config.db());
+		this.service = JsonResultService.of(config);
 	}
 
 	void calculate(Context ctx) {
