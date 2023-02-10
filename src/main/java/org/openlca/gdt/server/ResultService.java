@@ -26,6 +26,24 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	void simulate(Context ctx) {
+		var json = Http.readBodyOf(ctx);
+		if (json == null)
+			return;
+		if (!json.isJsonObject()) {
+			Http.sendBadRequest(ctx, "no valid calculation setup provided");
+			return;
+		}
+		var r = service.simulate(json.getAsJsonObject());
+		Http.respond(ctx, r);
+	}
+
+	void simulateNext(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.nextSimulationOf(id);
+		Http.respond(ctx, r);
+	}
+
 	void getState(Context ctx) {
 		var id = ctx.pathParam("id");
 		var r = service.getState(id);
@@ -62,6 +80,8 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	// region: tech-flows
+
 	void getTotalRequirements(Context ctx) {
 		var id = ctx.pathParam("id");
 		var r = service.getTotalRequirements(id);
@@ -74,6 +94,28 @@ class ResultService {
 		var r = service.getTotalRequirementsOf(id, techFlow);
 		Http.respond(ctx, r);
 	}
+
+	void getScalingFactors(Context ctx) {
+		var id = ctx.pathParam("id");
+		var r = service.getScalingFactors(id);
+		Http.respond(ctx, r);
+	}
+
+	void getScaledTechFlowsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getScaledTechFlowsOf(id, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	void getUnscaledTechFlowsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var techFlow = TechFlowId.parse(ctx.pathParam("tech-flow"));
+		var r = service.getUnscaledTechFlowsOf(id, techFlow);
+		Http.respond(ctx, r);
+	}
+
+	// endregion
 
 	// region: flow results
 

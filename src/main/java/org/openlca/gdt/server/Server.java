@@ -60,6 +60,8 @@ public class Server {
 
 		// calculation & dispose
 		app.post("/result/calculate", results::calculate);
+		app.post("/result/simulate", results::simulate);
+		app.post("/result/{id}/simulate/next", results::simulateNext);
 		app.post("/result/{id}/dispose", results::dispose);
 		app.delete("/result/{id}", results::dispose);
 		app.get("/result/{id}/state", results::getState);
@@ -70,8 +72,13 @@ public class Server {
 		app.get("/result/{id}/envi-flows", results::getEnviFlows);
 		app.get("/result/{id}/impact-categories", results::getImpactCategories);
 
+		// region: tech. flows
+		app.get("/result/{id}/scaling-factors", results::getScalingFactors);
 		app.get("/result/{id}/total-requirements", results::getTotalRequirements);
 		app.get("/result/{id}/total-requirements-of/{tech-flow}", results::getTotalRequirementsOf);
+		app.get("/result/{id}/scaled-tech-flows-of/{tech-flow}", results::getScaledTechFlowsOf);
+		app.get("/result/{id}/unscaled-tech-flows-of/{tech-flow}", results::getUnscaledTechFlowsOf);
+		// endregion
 
 		// region: flow results
 		app.get("/result/{id}/total-flows", results::getTotalFlows);
