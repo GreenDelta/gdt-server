@@ -1,6 +1,7 @@
 # native libraries and test database
 database/
 lib/
+build/
 
 # ide files
 .classpath
@@ -18,3 +19,6 @@ dist/
 
 # test outputs
 *.log
+
+depl/depl*
+depl/.dart_tool
