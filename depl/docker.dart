@@ -1,27 +1,68 @@
 import 'dart:io';
 
-const _base = """
-FROM eclipse-temurin:17-jre
+const _app = """
+from scratch
 
-RUN mkdir -p /app
-COPY lib /app/lib
+copy gdt-server.jar /app/gdt-server.jar
+copy native /app/native
 """;
 
-const _app = """
-FROM gdt-server-base
+const _base = """
+from eclipse-temurin:17-jre
 
-COPY native /app/native
-COPY gdt-server.jar /app
+copy lib /app/lib
+copy run.sh /app/run.sh
+run chmod +x /app/run.sh
+""";
 
-COPY ../start_container.sh /app
-RUN chmod +x /app/start_container.sh
+const _main = """
+from gdt-server-app
 
-ENTRYPOINT ["/app/start_container.sh"]
+from gdt-server-base
+
+copy --from=0 /app/gdt-server.jar /app
+copy --from=0 /app/native /app/native
+
+entrypoint ["/app/run.sh"]
+""";
+
+const _run = """#!/bin/bash
+java -jar /app/gdt-server.jar \
+    -data /app/data \
+    -native /app/native \
+    -static /app/static \
+    "\$@"
 """;
 
 buildImages(Directory buildDir) {
-  File(buildDir.path + "/base.Dockerfile").writeAsString(_base);
-  File(buildDir.path + "/app.Dockerfile").writeAsStringSync(_app);
+  print("build images ...");
+
+  print("  clean up");
+  clean();
+
+  print("  generate scripts");
+  var mkFile = (String file, String content) =>
+      File(buildDir.path + "/" + file).writeAsStringSync(content);
+  mkFile("app.Dockerfile", _app);
+  mkFile("base.Dockerfile", _base);
+  mkFile("main.Dockerfile", _main);
+  mkFile("run.sh", _run);
+  [
+    ["app.Dockerfile", "gdt-server-app"],
+    ["base.Dockerfile", "gdt-server-base"],
+    ["main.Dockerfile", "gdt-server"]
+  ].forEach((p) => _buildImage(buildDir, p[0], p[1]));
+}
+
+_buildImage(Directory buildDir, String file, String tag) {
+  print("  build image $tag");
+  var o = Process.runSync("docker", ["build", "-t", tag, "-f", file, "."],
+      workingDirectory: buildDir.path);
+  if (o.exitCode != 0) {
+    print(o.stderr);
+    print("ERROR: failed to build image $tag from ${file}");
+    exit(o.exitCode);
+  }
 }
 
 clean() {
@@ -48,7 +89,7 @@ clean() {
   // delete images
   stdout = Process.runSync("docker", ["image", "ls"]).stdout.toString();
   for (var line in stdout.split("\n")) {
-     var parts = line.trim().split(ws);
+    var parts = line.trim().split(ws);
     if (parts.length < 2) continue;
     var image = parts[0].trim();
     if (image.startsWith("gdt-server")) {

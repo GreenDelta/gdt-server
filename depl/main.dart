@@ -13,5 +13,5 @@ main() async {
 
   // await app.syncApp(buildDir);
   // nativelib.syncLibsWith(buildDir);
-  docker.clean();
+  docker.buildImages(buildDir);
 }
