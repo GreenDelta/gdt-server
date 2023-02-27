@@ -4,6 +4,12 @@
 [openLCA IPC protocol](https://greendelta.github.io/openLCA-ApiDoc/ipc/). See
 the openLCA IPC documentation for the available functions and examples.
 
+## Building
+
+```
+sudo env "PATH=$PATH" dart depl/main.dart
+```
+
 ## Running as Docker container
 
 When you run the server as Docker container, you need to mount a workspace
