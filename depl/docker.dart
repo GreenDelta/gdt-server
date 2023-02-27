@@ -27,10 +27,10 @@ entrypoint ["/app/run.sh"]
 """;
 
 const _run = """#!/bin/bash
-java -jar /app/gdt-server.jar \
-    -data /app/data \
-    -native /app/native \
-    -static /app/static \
+java -jar /app/gdt-server.jar \\
+    -data /app/data \\
+    -native /app/native \\
+    -static /app/static \\
     "\$@"
 """;
 
@@ -67,38 +67,57 @@ _buildImage(Directory buildDir, String file, String tag) {
 
 clean() {
   // todo stop & delete containers
+  _eachLineOf(_docker(["ps"]), (line) {
+    if (line.length < 2) return;
+    final container = line.last.trim();
+    final image = line[1].trim();
+    if (image.startsWith("gdt-server")) {
+      print("  stop container $container (image: $image)");
+      _docker(["stop", container]);
+    }
+  });
 
   // delete stopped containers
-  final ws = RegExp("\\s+");
-  var stdout = Process.runSync("docker", ["ps", "-a"]).stdout.toString();
-  for (var line in stdout.split("\n")) {
-    var parts = line.trim().split(ws);
-    if (parts.length < 2) continue;
-    var containerId = parts[0].trim();
-    var image = parts[1].trim();
+  _eachLineOf(_docker(["ps", "-a"]), (line) {
+    if (line.length < 2) return;
+    var containerId = line[0].trim();
+    var image = line[1].trim();
     if (image.startsWith("gdt-server")) {
       print("  delete container ${containerId} (image: ${image})");
-      var code = Process.runSync("docker", ["rm", containerId]).exitCode;
-      if (code != 0) {
-        print("ERROR: failed to delete container $containerId");
-        exit(code);
-      }
+      _docker(["rm", containerId]);
     }
-  }
+  });
 
   // delete images
-  stdout = Process.runSync("docker", ["image", "ls"]).stdout.toString();
-  for (var line in stdout.split("\n")) {
-    var parts = line.trim().split(ws);
-    if (parts.length < 2) continue;
-    var image = parts[0].trim();
+  _eachLineOf(_docker(["image", "ls"]), (line) {
+    if (line.length < 2) return;
+    var image = line[0].trim();
     if (image.startsWith("gdt-server")) {
       print("  delete image ${image}");
-      var code = Process.runSync("docker", ["image", "rm", image]).exitCode;
-      if (code != 0) {
-        print("ERROR: failed to delete image $image");
-        exit(code);
-      }
+      _docker(["image", "rm", image]);
     }
+  });
+}
+
+ProcessResult _docker(List<String> args) {
+  final pr = Process.runSync("docker", args);
+  if (pr.exitCode != 0) {
+    print(pr.stderr);
+    args.join(" ");
+    print("ERROR: command failed: docker ${args.join(' ')}");
+    exit(pr.exitCode);
+  }
+  return pr;
+}
+
+_eachLineOf(ProcessResult pr, Function(List<String>) fn) {
+  final out = pr.stdout;
+  if (out == null) {
+    return;
+  }
+  final ws = RegExp("\\s+");
+  for (var line in out.toString().split("\n")) {
+    var parts = line.trim().split(ws);
+    fn(parts);
   }
 }
