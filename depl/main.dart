@@ -11,7 +11,7 @@ main(List<String> args) async {
       await nativelib.syncLibsWith(config);
       break;
     case Command.docker:
-      docker.buildImages(config);
+      docker.build(config);
       break;
   }
 }
