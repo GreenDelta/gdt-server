@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:path/path.dart' as p;
 
 enum Command {
   app,
@@ -67,7 +68,9 @@ class Config {
       if (stat.type != FileSystemEntityType.directory) {
         continue;
       }
-      return db.uri.pathSegments.last;
+      var dbName = p.basename(db.path);
+      print("found database: $dbName");
+      return dbName;
     }
     return null;
   }
