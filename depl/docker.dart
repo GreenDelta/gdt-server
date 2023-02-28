@@ -1,5 +1,7 @@
 import 'dart:io';
 
+import 'config.dart';
+
 const _app = """
 from scratch
 
@@ -34,7 +36,7 @@ java -jar /app/gdt-server.jar \\
     "\$@"
 """;
 
-buildImages(Directory buildDir) {
+buildImages(Config config) {
   print("build images ...");
 
   print("  clean up");
@@ -42,7 +44,7 @@ buildImages(Directory buildDir) {
 
   print("  generate scripts");
   var mkFile = (String file, String content) =>
-      File(buildDir.path + "/" + file).writeAsStringSync(content);
+      config.fileOf(file).writeAsStringSync(content);
   mkFile("app.Dockerfile", _app);
   mkFile("base.Dockerfile", _base);
   mkFile("main.Dockerfile", _main);
@@ -51,7 +53,7 @@ buildImages(Directory buildDir) {
     ["app.Dockerfile", "gdt-server-app"],
     ["base.Dockerfile", "gdt-server-base"],
     ["main.Dockerfile", "gdt-server"]
-  ].forEach((p) => _buildImage(buildDir, p[0], p[1]));
+  ].forEach((p) => _buildImage(config.buildDir, p[0], p[1]));
 }
 
 _buildImage(Directory buildDir, String file, String tag) {

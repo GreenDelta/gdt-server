@@ -2,22 +2,24 @@ import 'dart:io';
 import 'package:archive/archive.dart';
 import 'package:archive/archive_io.dart' as zipio;
 
+import 'config.dart';
+
 const version = "0.0.1";
 const url = "https://github.com/GreenDelta/olca-native/releases/download/v" +
     "$version/olca-native-umfpack-linux-x64.zip";
 
-syncLibsWith(Directory buildDir) async {
+syncLibsWith(Config config) async {
   print("sync native libraries ...");
 
   // check if the library folder already exists
-  final libDir = Directory(buildDir.path + "/native/olca-native/$version/x64");
+  final libDir = config.dirOf("native/olca-native/$version/x64");
   if (libDir.existsSync()) {
     print("  native library folder exists: ${libDir.path}");
     return;
   }
 
   // download the libraries if necessary
-  final libZip = File(buildDir.path + "/native_linux_x64.zip");
+  final libZip = config.fileOf("native_linux_x64.zip");
   if (!libZip.existsSync()) {
     print("  download native libraries");
     var request = await HttpClient().getUrl(Uri.parse(url));

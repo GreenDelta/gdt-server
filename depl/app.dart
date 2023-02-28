@@ -1,6 +1,8 @@
 import 'dart:io';
 
-syncApp(Directory buildDir) async {
+import 'config.dart';
+
+syncApp(Config config) async {
   print("build the application ...");
 
   // compile the application
@@ -22,21 +24,21 @@ syncApp(Directory buildDir) async {
 
   // sync app file
   print("  sync files");
-  var appJar = File(buildDir.path + "/gdt-server.jar");
+  var appJar = config.fileOf("gdt-server.jar");
   if (appJar.existsSync()) {
     appJar.delete();
   }
   File("target/gdt-server.jar").copy(appJar.path);
 
   // sync lib files
-  var libDir = Directory(buildDir.path + "/lib");
+  var libDir = config.dirOf("lib");
   if (!libDir.existsSync()) {
     libDir.createSync();
   }
   var syncedLibs = <String>[];
   for (var f in Directory("target/lib").listSync()) {
     var name = f.path.split("/").last;
-    var path = "${buildDir.path}/lib/$name";
+    var path = config.pathOf("lib/$name");
     var lib = File(path);
     if (!lib.existsSync()) {
       print("  copy lib ${name}");
@@ -48,7 +50,7 @@ syncApp(Directory buildDir) async {
   // delete old library files
   for (var f in libDir.listSync()) {
     var name = f.path.split("/").last;
-    var path = "${buildDir.path}/lib/$name";
+    var path = config.pathOf("lib/$name");
     if (!syncedLibs.contains(path)) {
       print("  delete old lib $path");
       File(f.path).deleteSync();

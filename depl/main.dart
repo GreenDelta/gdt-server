@@ -1,32 +1,17 @@
-import "dart:io";
-
 import "nativelib.dart" as nativelib;
 import "app.dart" as app;
 import "docker.dart" as docker;
+import 'config.dart';
 
 main(List<String> args) async {
-  String buildTarget;
-  if (args.isEmpty) {
-    print("info: no build target provided; default to 'app'");
-    buildTarget = 'app';
-  } else {
-    buildTarget = args[0];
-  }
-
-  var buildDir = Directory("build");
-  if (!buildDir.existsSync()) {
-    buildDir.createSync();
-  }
-
-  switch (buildTarget) {
-    case "app":
-      await app.syncApp(buildDir);
-      await nativelib.syncLibsWith(buildDir);
+  var config = Config.parse(args);
+  switch (config.command) {
+    case Command.app:
+      await app.syncApp(config);
+      await nativelib.syncLibsWith(config);
       break;
-    case "docker":
-      docker.buildImages(buildDir);
+    case Command.docker:
+      docker.buildImages(config);
       break;
-    default:
-      print("error: unknown build target: $buildTarget");
   }
 }
