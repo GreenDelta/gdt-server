@@ -5,15 +5,17 @@ enum Command {
   app,
   docker;
 
-  static Command of(String arg) {
-    switch (arg.trim().toLowerCase()) {
+  static Command of(List<String> args) {
+    if (args.isEmpty) {
+      return app;
+    }
+    switch (args[0].trim().toLowerCase()) {
       case "app":
         return app;
       case "docker":
         return docker;
       default:
-        print("error: unknown command: $arg");
-        exit(1);
+        return app;
     }
   }
 }
@@ -29,26 +31,22 @@ class Config {
   bool get hasDatabase => database != null;
 
   static Config parse(List<String> args) {
-    if (args.isEmpty) {
-      print("info: no build target provided; default to 'app'");
-      var buildDir = _buildDirOf("build");
-      return Config(Command.app, buildDir, false, _dbOf(buildDir));
-    }
-
-    var command = Command.of(args[0]);
+    var command = Command.of(args);
+    print("run build of type: ${command.name}");
     var readonly = false;
     Directory? dir = null;
-    for (int i = 1; i < args.length; i++) {
+    for (int i = 0; i < args.length; i++) {
       var arg = args[i];
       if (arg == "--readonly") {
         readonly = true;
         continue;
       }
-      if (arg == "-d" && i < args.length - 2) {
+      if (arg.startsWith("-d") && i < args.length - 1) {
         dir = _buildDirOf(args[i + 1]);
       }
     }
     dir = dir != null ? dir : _buildDirOf("build");
+    print("build in: ${dir.path}");
     return Config(command, dir, readonly, _dbOf(dir));
   }
 

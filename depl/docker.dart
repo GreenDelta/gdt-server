@@ -40,8 +40,9 @@ build(Config config) {
   var build = _DockerBuild(config);
   build.clean();
   if (config.hasDatabase) {
+    build.dbImage();
   } else {
-    build.buildLayers(config);
+    build.layers();
   }
 }
 
@@ -50,7 +51,27 @@ class _DockerBuild {
 
   _DockerBuild(this.config);
 
-  buildLayers(Config config) {
+  dbImage() {
+    print("build docker image with database");
+    var recipe = "from eclipse-temurin:17-jre\n"
+        "copy gdt-server.jar /app/gdt-server.jar\n"
+        "copy lib /app/lib\n"
+        "copy native /app/native\n"
+        "copy data /app/data\n"
+        'cmd ["java", "-jar", "/app/gdt-server.jar", '
+        '"-data", "/app/data", '
+        '"-db", "${config.database}", '
+        '"-native", "/app/native", '
+        '"-port", "8080", '
+        '"--readonly" ]\n';
+    config.fileOf("Dockerfile").writeAsStringSync(recipe);
+    print("  build image gdt-server");
+    _docker(["build", "-t", "gdt-server", "."]);
+    print("  export image as gdt-server.tar");
+    _docker(["save", "-o", "gdt-server.tar", "gdt-server"]);
+  }
+
+  layers() {
     print("build docker images ...");
     print("  generate scripts");
     var mkFile = (String file, String content) =>
