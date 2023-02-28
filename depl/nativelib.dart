@@ -6,7 +6,7 @@ const version = "0.0.1";
 const url = "https://github.com/GreenDelta/olca-native/releases/download/v" +
     "$version/olca-native-umfpack-linux-x64.zip";
 
-syncLibsWith(Directory buildDir) {
+syncLibsWith(Directory buildDir) async {
   print("sync native libraries ...");
 
   // check if the library folder already exists
@@ -20,10 +20,9 @@ syncLibsWith(Directory buildDir) {
   final libZip = File(buildDir.path + "/native_linux_x64.zip");
   if (!libZip.existsSync()) {
     print("  download native libraries");
-    HttpClient()
-        .getUrl(Uri.parse(url))
-        .then((request) => request.close())
-        .then((response) => response.pipe(libZip.openWrite()));
+    var request = await HttpClient().getUrl(Uri.parse(url));
+    var response = await request.close();
+    await response.pipe(libZip.openWrite());
   }
 
   // extract the library zip
