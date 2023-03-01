@@ -14,6 +14,10 @@ clean(Config config) async {
       await file.delete();
     }
   }
+  var libDir = config.dirOf("lib");
+  if (await libDir.exists()) {
+    await libDir.delete(recursive: true);
+  }
 }
 
 class _AppBuild {
