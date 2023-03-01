@@ -79,10 +79,13 @@ class _DockerBuild {
         '"-port", "8080", '
         '"--readonly" ]\n';
     config.fileOf("Dockerfile").writeAsStringSync(recipe);
-    print("  build image gdt-server");
-    _docker(["build", "-t", "gdt-server", "."]);
-    print("  export image as gdt-server.tar");
-    _docker(["save", "-o", "gdt-server.tar", "gdt-server"]);
+    var name = config.imageSuffix != null
+      ? "gdt-server-${config.imageSuffix}"
+      : "gdt-server";
+    print("  build image $name");
+    _docker(["build", "-t", "$name", "."]);
+    print("  export image as $name.tar");
+    _docker(["save", "-o", "$name.tar", "$name"]);
   }
 
   layers() {

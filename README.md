@@ -1,12 +1,13 @@
 # gdt-server
 
-`gdt-server` is server application that implements Rest-API of the
-[openLCA IPC protocol](https://greendelta.github.io/openLCA-ApiDoc/ipc/). See
-the openLCA IPC documentation for the available functions and examples.
+`gdt-server` is server application that implements Rest-API of the openLCA IPC
+protocol. See the [openLCA IPC
+documentation](https://greendelta.github.io/openLCA-ApiDoc/ipc/) for more
+information and examples.
 
 ## Building
 
-In order to build the server application, the current version of  the openLCA
+In order to build the server application, the current version of the openLCA
 Maven modules need to be installed, see
 https://github.com/GreenDelta/olca-modules.
 
@@ -22,14 +23,39 @@ Application packages can be then build with the `depl` tool:
 dart depl/main.dart
 ```
 
-This builds the server application, collects the jar-dependencies and native
-libraries. With the `docker` command, you can build the different docker
-images (note that you may have to do this as `sudo` command with the current
-user path):
+This builds the server application in the `build` folder, collects the
+jar-dependencies and native libraries, and also creates 2 Docker images:
 
-```bash
-sudo env "PATH=$PATH" dart depl/main.dart docker
+* `gdt-server-app`: contains the server application and native calculation
+  libraries
+* `gdt-server-base`: contains the dependencies of the server application
+
+These images can be combined to a server application using [this
+Dockerfile](./). Note that in order to run the Docker builds you may need to
+[configure Docker](https://docs.docker.com/engine/install/linux-postinstall/) so
+that it doesn't need to run as root user.
+
+It is also possible to build images that contain (read-only) databases with
+LCA models by running the build with a build folder that contains a `data`
+folder with the following layout:
+
 ```
++ <build folder>
+  + data
+    + databases
+      - <openLCA database>
+    + libraries
+      - <possible data library>
+      - ...
+```
+
+Other build options are:
+
+* commands are `build` (default) or `clean`
+* `-d <build folder>`: runs or cleans the build in the given folder
+* `-i <image suffix>`: appends the suffix to the Docker image in case of a build
+   with packaged database: `gdt-server-<image suffix>`
+* `--no-docker`: skips the docker build
 
 You can also compile the `depl` tool and run the compiled version:
 
