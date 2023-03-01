@@ -58,3 +58,17 @@ You can also host static files by mounting a folder to the `/app/static` folder:
 ```
   -v <your host folder>:/app/static
 ```
+
+## License
+The app layer with the REST API of the gdt-server (e.g. the `gdt-server-app`
+Docker image) and the `depl` tool are licensed under the
+_GNU Affero General Public License Version 3_ (AGPL-v3)
+[see the license text](./LICENSE). The library layer (e.g. the `gdt-server-base`
+Docker image) contains the openLCA core and other third party libraries with
+different licenses, partly _not_ compatible with the AGPL-v3. This means, that
+you can compose and use a server locally on your computer but distributing the
+server is not allowed as it violates the conditions of the AGPL-v3. Note that
+distributing according to the AGPL-v3, also includes usages over a network.
+GreenDelta provides Docker images and gdt-server builds under different license
+conditions than the AGPL-v3. If you need another license,
+[just let us know](https://www.greendelta.com/about-us/contact-us/).
