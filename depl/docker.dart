@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:path/path.dart' as p;
 import 'config.dart';
 
 const _app = """
@@ -43,6 +43,20 @@ build(Config config) {
     build.dbImage();
   } else {
     build.layers();
+  }
+}
+
+clean(Config config) {
+  _DockerBuild(config).clean();
+  _cleanFiles(config);
+}
+
+_cleanFiles(Config config) async {
+  await for (var f in config.buildDir.list()) {
+    if (p.basename(f.path).endsWith("Dockerfile")) {
+      var file = File(f.path);
+      await file.delete();
+    }
   }
 }
 

@@ -2,20 +2,20 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 
 enum Command {
-  app,
-  docker;
+  build,
+  clean;
 
   static Command of(List<String> args) {
     if (args.isEmpty) {
-      return app;
+      return build;
     }
     switch (args[0].trim().toLowerCase()) {
-      case "app":
-        return app;
-      case "docker":
-        return docker;
+      case "build":
+        return build;
+      case "clean":
+        return clean;
       default:
-        return app;
+        return build;
     }
   }
 }
@@ -24,9 +24,14 @@ class Config {
   final Command command;
   final Directory buildDir;
   final bool readonly;
+  final bool noDocker;
+  final String? imageSuffix;
   final String? database;
 
-  Config(this.command, this.buildDir, this.readonly, this.database);
+  Config(this.command, this.buildDir,
+      {bool? readonly, bool? noDocker, this.imageSuffix, this.database})
+      : readonly = readonly != null ? readonly : false,
+        noDocker = noDocker != null ? noDocker : false;
 
   bool get hasDatabase => database != null;
 
@@ -34,20 +39,37 @@ class Config {
     var command = Command.of(args);
     print("run build of type: ${command.name}");
     var readonly = false;
+    var noDocker = false;
     Directory? dir = null;
+    String? suffix = null;
     for (int i = 0; i < args.length; i++) {
       var arg = args[i];
       if (arg == "--readonly") {
         readonly = true;
         continue;
       }
+      if (arg == "--no-docker") {
+        noDocker = true;
+        continue;
+      }
       if (arg.startsWith("-d") && i < args.length - 1) {
         dir = _buildDirOf(args[i + 1]);
+        i++;
+        continue;
+      }
+      if (arg.startsWith("-i") && i < args.length - 1) {
+        suffix = args[i + 1];
+        i++;
+        continue;
       }
     }
     dir = dir != null ? dir : _buildDirOf("build");
     print("build in: ${dir.path}");
-    return Config(command, dir, readonly, _dbOf(dir));
+    return Config(command, dir,
+        imageSuffix: suffix,
+        database: _dbOf(dir),
+        readonly: readonly,
+        noDocker: noDocker);
   }
 
   static Directory _buildDirOf(String path) {

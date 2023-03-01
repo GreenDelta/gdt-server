@@ -7,6 +7,15 @@ syncApp(Config config) async {
   await build.run();
 }
 
+clean(Config config) async {
+  var files = [config.fileOf("gdt-server.jar"), config.fileOf("run.sh")];
+  for (var file in files) {
+    if (await file.exists()) {
+      await file.delete();
+    }
+  }
+}
+
 class _AppBuild {
   final Config config;
 
