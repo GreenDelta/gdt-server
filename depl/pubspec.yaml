@@ -5,3 +5,4 @@ environment:
   sdk: '>=2.19.2 <3.0.0'
 dependencies:
   archive: ^3.3.6
+  path: ^1.8.3

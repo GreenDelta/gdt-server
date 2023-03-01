@@ -1,58 +1,88 @@
 import 'dart:io';
 
-syncApp(Directory buildDir) async {
-  print("build the application ...");
+import 'config.dart';
 
-  // compile the application
-  print("  compile with Maven");
-  var r = await Process.run("mvn", ["clean", "package", "-DskipTests=true"]);
-  var stdout = r.stdout.toString();
-  var buildSuccess = false;
-  for (var line in stdout.split("\n")) {
-    if (line.trim() == "[INFO] BUILD SUCCESS") {
-      buildSuccess = true;
-      break;
+syncApp(Config config) async {
+  var build = _AppBuild(config);
+  await build.run();
+}
+
+class _AppBuild {
+  final Config config;
+
+  _AppBuild(this.config);
+
+  run() async {
+    print("build the application ...");
+    await _compile();
+    await _syncFiles();
+    await _generateRunScript();
+    print("  ok");
+  }
+
+  _compile() async {
+    print("  compile with Maven");
+    var r = await Process.run("mvn", ["clean", "package", "-DskipTests=true"]);
+    var stdout = r.stdout.toString();
+    var buildSuccess = false;
+    for (var line in stdout.split("\n")) {
+      if (line.trim() == "[INFO] BUILD SUCCESS") {
+        buildSuccess = true;
+        break;
+      }
+    }
+    if (!buildSuccess) {
+      print(stdout);
+      print("error: build failed");
+      exit(1);
     }
   }
-  if (!buildSuccess) {
-    print(stdout);
-    print("error: build failed");
-    exit(1);
-  }
 
-  // sync app file
-  print("  sync files");
-  var appJar = File(buildDir.path + "/gdt-server.jar");
-  if (appJar.existsSync()) {
-    appJar.delete();
-  }
-  File("target/gdt-server.jar").copy(appJar.path);
-
-  // sync lib files
-  var libDir = Directory(buildDir.path + "/lib");
-  if (!libDir.existsSync()) {
-    libDir.createSync();
-  }
-  var syncedLibs = <String>[];
-  for (var f in Directory("target/lib").listSync()) {
-    var name = f.path.split("/").last;
-    var path = "${buildDir.path}/lib/$name";
-    var lib = File(path);
-    if (!lib.existsSync()) {
-      print("  copy lib ${name}");
-      File(f.path).copySync(lib.path);
+  _syncFiles() async {
+    print("  sync files");
+    var appJar = config.fileOf("gdt-server.jar");
+    if (appJar.existsSync()) {
+      appJar.delete();
     }
-    syncedLibs.add(path);
-  }
+    await File("target/gdt-server.jar").copy(appJar.path);
 
-  // delete old library files
-  for (var f in libDir.listSync()) {
-    var name = f.path.split("/").last;
-    var path = "${buildDir.path}/lib/$name";
-    if (!syncedLibs.contains(path)) {
-      print("  delete old lib $path");
-      File(f.path).deleteSync();
+    // sync lib files
+    var libDir = config.dirOf("lib");
+    if (!libDir.existsSync()) {
+      libDir.createSync();
+    }
+    var syncedLibs = <String>[];
+    for (var f in Directory("target/lib").listSync()) {
+      var name = f.path.split("/").last;
+      var path = config.pathOf("lib/$name");
+      var lib = File(path);
+      if (!lib.existsSync()) {
+        print("  copy lib ${name}");
+        await File(f.path).copy(lib.path);
+      }
+      syncedLibs.add(path);
+    }
+
+    // delete old library files
+    for (var f in libDir.listSync()) {
+      var name = f.path.split("/").last;
+      var path = config.pathOf("lib/$name");
+      if (!syncedLibs.contains(path)) {
+        print("  delete old lib $path");
+        await File(f.path).delete();
+      }
     }
   }
-  print("  ok");
+
+  _generateRunScript() async {
+    var text = "#!/bin/bash\njava -jar gdt-server.jar -port 8080 "
+        "-timeout 30 -native native";
+    if (config.hasDatabase) {
+      text += " -data data -db ${config.database}";
+    }
+    if (config.readonly) {
+      text += " --readonly";
+    }
+    await config.fileOf("run.sh").writeAsString(text + "\n");
+  }
 }
