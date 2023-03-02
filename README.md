@@ -72,11 +72,11 @@ folder of the container. The name of the database and possible other arguments
 are passed to the container at the end of the command:
 
 ```batch
-sudo docker run \
-  -p 8080:8080 \
+docker run \
+  -p 3000:8080 \
   -v $HOME/openLCA-data-1.4:/app/data \
   --rm -d gdt-server \
-  -db ei22 --readonly
+  -db example --readonly
 ```
 
 You can also host static files by mounting a folder to the `/app/static` folder:

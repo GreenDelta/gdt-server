@@ -4,28 +4,14 @@ import 'config.dart';
 
 const _app = """
 from scratch
-
 copy gdt-server.jar /app/gdt-server.jar
 copy native /app/native
-""";
-
-const _base = """
-from eclipse-temurin:17-jre
-
-copy lib /app/lib
 copy run.sh /app/run.sh
-run chmod +x /app/run.sh
 """;
 
-const _main = """
-from gdt-server-app
-
-from gdt-server-base
-
-copy --from=0 /app/gdt-server.jar /app
-copy --from=0 /app/native /app/native
-
-entrypoint ["/app/run.sh"]
+const _lib = """
+from scratch
+copy lib /app/lib
 """;
 
 const _run = """#!/bin/bash
@@ -94,12 +80,12 @@ class _DockerBuild {
     var mkFile = (String file, String content) =>
         config.fileOf(file).writeAsStringSync(content);
     mkFile("app.Dockerfile", _app);
-    mkFile("base.Dockerfile", _base);
-    mkFile("main.Dockerfile", _main);
+    mkFile("lib.Dockerfile", _lib);
+    mkFile("main.Dockerfile", File("Dockerfile").readAsStringSync());
     mkFile("run.sh", _run);
     [
       ["app.Dockerfile", "gdt-server-app"],
-      ["base.Dockerfile", "gdt-server-base"],
+      ["lib.Dockerfile", "gdt-server-lib"],
       ["main.Dockerfile", "gdt-server"]
     ].forEach((p) => _buildImage(config.buildDir, p[0], p[1]));
   }
