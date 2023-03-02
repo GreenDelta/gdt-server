@@ -6,16 +6,19 @@ const _app = """
 from scratch
 copy gdt-server.jar /app/gdt-server.jar
 copy run.sh /app/run.sh
+copy LICENSE /app/LICENSE
 """;
 
 const _lib = """
 from scratch
 copy lib /app/lib
+copy licenses/lib.txt /app/THIRDPARTY_README
 """;
 
 const _native = """
 from scratch
 copy native /app/native
+copy licenses/native.txt /app/THIRDPARTY_README
 """;
 
 const _run = """#!/bin/bash
@@ -70,8 +73,8 @@ class _DockerBuild {
         '"--readonly" ]\n';
     config.fileOf("Dockerfile").writeAsStringSync(recipe);
     var name = config.imageSuffix != null
-      ? "gdt-server-${config.imageSuffix}"
-      : "gdt-server";
+        ? "gdt-server-${config.imageSuffix}"
+        : "gdt-server";
     print("  build image $name");
     _docker(["build", "-t", "$name", "."]);
     print("  export image as $name.tar");
@@ -81,12 +84,20 @@ class _DockerBuild {
   layers() {
     print("build docker images ...");
     print("  generate scripts");
-    var mkFile = (String file, String content) =>
-        config.fileOf(file).writeAsStringSync(content);
+    var mkFile = (String file, String content) {
+      var f = config.fileOf(file);
+      if (!f.parent.existsSync()) {
+        f.parent.createSync(recursive: true);
+      }
+      f.writeAsStringSync(content);
+    };
     mkFile("app.Dockerfile", _app);
     mkFile("lib.Dockerfile", _lib);
     mkFile("native.Dockerfile", _native);
     mkFile("main.Dockerfile", File("Dockerfile").readAsStringSync());
+    mkFile("licenses/lib.txt", File("licenses/lib.txt").readAsStringSync());
+    mkFile("licenses/native.txt", File("licenses/native.txt").readAsStringSync());
+    mkFile("LICENSE", File("LICENSE").readAsStringSync());
     mkFile("run.sh", _run);
     [
       ["app.Dockerfile", "gdt-server-app"],
