@@ -5,13 +5,17 @@ import 'config.dart';
 const _app = """
 from scratch
 copy gdt-server.jar /app/gdt-server.jar
-copy native /app/native
 copy run.sh /app/run.sh
 """;
 
 const _lib = """
 from scratch
 copy lib /app/lib
+""";
+
+const _native = """
+from scratch
+copy native /app/native
 """;
 
 const _run = """#!/bin/bash
@@ -81,11 +85,13 @@ class _DockerBuild {
         config.fileOf(file).writeAsStringSync(content);
     mkFile("app.Dockerfile", _app);
     mkFile("lib.Dockerfile", _lib);
+    mkFile("native.Dockerfile", _native);
     mkFile("main.Dockerfile", File("Dockerfile").readAsStringSync());
     mkFile("run.sh", _run);
     [
       ["app.Dockerfile", "gdt-server-app"],
       ["lib.Dockerfile", "gdt-server-lib"],
+      ["native.Dockerfile", "gdt-server-native"],
       ["main.Dockerfile", "gdt-server"]
     ].forEach((p) => _buildImage(config.buildDir, p[0], p[1]));
   }
