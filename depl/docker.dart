@@ -59,7 +59,7 @@ class _DockerBuild {
   _DockerBuild(this.config);
 
   dbImage() {
-    print("  generate Docker file");
+    print("generate Docker file");
     var recipe = "from eclipse-temurin:17-jre\n"
         "copy gdt-server.jar /app/gdt-server.jar\n"
         "copy lib /app/lib\n"
@@ -70,6 +70,7 @@ class _DockerBuild {
         '"-db", "${config.database}", '
         '"-native", "/app/native", '
         '"-port", "${config.port}", '
+        '"-timeout", "30", '
         '"--readonly" ]\n';
     config.fileOf("Dockerfile").writeAsStringSync(recipe);
 
@@ -80,14 +81,14 @@ class _DockerBuild {
     var name = config.imageSuffix != null
         ? "gdt-server-${config.imageSuffix}"
         : "gdt-server";
-    print("  build image $name");
+    print("build image $name");
     _docker(["build", "-t", "$name", "."]);
-    print("  export image as $name.tar");
+    print("export image as $name.tar");
     _docker(["save", "-o", "$name.tar", "$name"]);
   }
 
   layers() {
-    print("  generate Docker files");
+    print("generate Docker files");
     var mkFile = (String file, String content) {
       var f = config.fileOf(file);
       if (!f.parent.existsSync()) {
@@ -108,7 +109,7 @@ class _DockerBuild {
     if (config.noImages) {
       return;
     }
-    print("  generate Docker images");
+    print("generate Docker images");
     [
       ["app.Dockerfile", "gdt-server-app"],
       ["lib.Dockerfile", "gdt-server-lib"],
