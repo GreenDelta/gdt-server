@@ -55,7 +55,8 @@ Other build options are:
 * `-d <build folder>`: runs or cleans the build in the given folder
 * `-i <image suffix>`: appends the suffix to the Docker image in case of a build
    with packaged database: `gdt-server-<image suffix>`
-* `--no-docker`: skips the docker build
+* `-port <port>`: set the server port that should be used in the generated scripts
+* `--no-images`: create Docker files but do not create and delete images
 
 You can also compile the `depl` tool and run the compiled version:
 

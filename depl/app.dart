@@ -88,7 +88,7 @@ class _AppBuild {
   }
 
   _generateRunScript() async {
-    var text = "#!/bin/bash\njava -jar gdt-server.jar -port 8080 "
+    var text = "#!/bin/bash\njava -jar gdt-server.jar -port ${config.port} "
         "-timeout 30 -native native";
     if (config.hasDatabase) {
       text += " -data data -db ${config.database}";

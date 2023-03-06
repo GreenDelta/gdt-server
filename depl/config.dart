@@ -24,44 +24,65 @@ class Config {
   final Command command;
   final Directory buildDir;
   final bool readonly;
-  final bool noDocker;
+  final bool noImages;
   final String? imageSuffix;
   final String? database;
+  final String? _port;
 
   Config(this.command, this.buildDir,
-      {bool? readonly, bool? noDocker, this.imageSuffix, this.database})
+      {bool? readonly,
+      bool? noImages,
+      this.imageSuffix,
+      this.database,
+      String? port})
       : readonly = readonly != null ? readonly : false,
-        noDocker = noDocker != null ? noDocker : false;
+        noImages = noImages != null ? noImages : false,
+        _port = port;
 
   bool get hasDatabase => database != null;
+  String get port => _port ?? "8080";
 
   static Config parse(List<String> args) {
     var command = Command.of(args);
     print("run build of type: ${command.name}");
+
+    // config
     var readonly = false;
-    var noDocker = false;
+    var noImages = false;
     Directory? dir = null;
     String? suffix = null;
+    String? port = null;
+
     for (int i = 0; i < args.length; i++) {
       var arg = args[i];
+
+      // boolean flags
       if (arg == "--readonly") {
         readonly = true;
         continue;
       }
-      if (arg == "--no-docker") {
-        noDocker = true;
+      if (arg == "--no-images") {
+        noImages = true;
         continue;
       }
-      if (arg.startsWith("-d") && i < args.length - 1) {
-        dir = _buildDirOf(args[i + 1]);
-        i++;
+
+      // key-value pairs
+      if (!arg.startsWith("-") || i >= (args.length - 1)) {
         continue;
       }
-      if (arg.startsWith("-i") && i < args.length - 1) {
-        suffix = args[i + 1];
-        i++;
-        continue;
+      var value = args[i + 1];
+      switch (arg) {
+        case "-d":
+          dir = _buildDirOf(value);
+          break;
+        case "-i":
+          suffix = value;
+          break;
+        case "-port":
+          port = value;
+          break;
       }
+      i++;
     }
     dir = dir != null ? dir : _buildDirOf("build");
     print("build in: ${dir.path}");
@@ -69,7 +90,8 @@ class Config {
         imageSuffix: suffix,
         database: _dbOf(dir),
         readonly: readonly,
-        noDocker: noDocker);
+        noImages: noImages,
+        port: port);
   }
 
   static Directory _buildDirOf(String path) {

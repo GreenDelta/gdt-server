@@ -59,7 +59,7 @@ class _DockerBuild {
   _DockerBuild(this.config);
 
   dbImage() {
-    print("build docker image with database");
+    print("  generate Docker file");
     var recipe = "from eclipse-temurin:17-jre\n"
         "copy gdt-server.jar /app/gdt-server.jar\n"
         "copy lib /app/lib\n"
@@ -69,9 +69,14 @@ class _DockerBuild {
         '"-data", "/app/data", '
         '"-db", "${config.database}", '
         '"-native", "/app/native", '
-        '"-port", "8080", '
+        '"-port", "${config.port}", '
         '"--readonly" ]\n';
     config.fileOf("Dockerfile").writeAsStringSync(recipe);
+
+    // build and export the image
+    if (config.noImages) {
+      return;
+    }
     var name = config.imageSuffix != null
         ? "gdt-server-${config.imageSuffix}"
         : "gdt-server";
@@ -82,8 +87,7 @@ class _DockerBuild {
   }
 
   layers() {
-    print("build docker images ...");
-    print("  generate scripts");
+    print("  generate Docker files");
     var mkFile = (String file, String content) {
       var f = config.fileOf(file);
       if (!f.parent.existsSync()) {
@@ -96,20 +100,26 @@ class _DockerBuild {
     mkFile("native.Dockerfile", _native);
     mkFile("main.Dockerfile", File("Dockerfile").readAsStringSync());
     mkFile("licenses/lib.txt", File("licenses/lib.txt").readAsStringSync());
-    mkFile("licenses/native.txt", File("licenses/native.txt").readAsStringSync());
+    mkFile(
+        "licenses/native.txt", File("licenses/native.txt").readAsStringSync());
     mkFile("LICENSE", File("LICENSE").readAsStringSync());
     mkFile("run.sh", _run);
+
+    if (config.noImages) {
+      return;
+    }
+    print("  generate Docker images");
     [
       ["app.Dockerfile", "gdt-server-app"],
       ["lib.Dockerfile", "gdt-server-lib"],
       ["native.Dockerfile", "gdt-server-native"],
       ["main.Dockerfile", "gdt-server"]
-    ].forEach((p) => _buildImage(config.buildDir, p[0], p[1]));
-  }
-
-  _buildImage(Directory buildDir, String file, String tag) {
-    print("  build image $tag");
-    _docker(["build", "-t", tag, "-f", file, "."]);
+    ].forEach((p) {
+      var file = p[0];
+      var tag = p[1];
+      print("  build image $tag");
+      _docker(["build", "-t", tag, "-f", file, "."]);
+    });
   }
 
   clean() {

@@ -10,9 +10,7 @@ main(List<String> args) async {
       print("run build in folder: ${config.buildDir}");
       await app.syncApp(config);
       await nativelib.syncLibsWith(config);
-      if (!config.noDocker) {
-        docker.build(config);
-      }
+      docker.build(config);
       break;
     case Command.clean:
       print("clean build in folder: ${config.buildDir}");
