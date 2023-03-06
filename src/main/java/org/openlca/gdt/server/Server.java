@@ -119,6 +119,15 @@ public class Server {
 		app.get("/result/{id}/total-costs-of/{tech-flow}", results::getTotalCostsOf);
 		// endregion
 
+		// TODO: deprecated `results` routes
+		// these routes only exists for backwards compatibility with older API
+		// versions and should not be used anymore
+		app.post("/results/calculate", results::calculate);
+		app.post("/results/{id}/dispose", results::dispose);
+		app.delete("/results/{id}", results::dispose);
+		app.get("/results/{id}/state", results::getState);
+		app.get("/results/{id}/total-impacts", results::getTotalImpacts);
+
 		// register a shutdown hook for closing database and server
 		Runtime.getRuntime().addShutdownHook(new Thread(() -> {
 			try {

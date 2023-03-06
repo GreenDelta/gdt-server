@@ -8,7 +8,7 @@ import org.openlca.nativelib.NativeLib;
 
 class Version {
 
-	private static final String VERSION = "2.0.24";
+	private static final String VERSION = "2.0.25";
 
 	static void get(Context ctx) {
 		var obj = new JsonObject();
