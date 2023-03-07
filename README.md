@@ -55,14 +55,14 @@ dart depl/main.dart
 ```
 
 This builds the server application in the `build` folder, collects the
-jar-dependencies and native libraries, and also creates 2 Docker images:
+jar-dependencies and native libraries, and also creates 3 Docker images:
 
-* `gdt-server-app`: contains the server application and native calculation
-  libraries
-* `gdt-server-base`: contains the dependencies of the server application
+* `gdt-server-app`: contains the server application
+* `gdt-server-lib`: contains the Java dependencies of the server application
+* `gdt-server-native`: contains the native calculation libraries
 
 These images can be combined to a server application using [this
-Dockerfile](./). Note that in order to run the Docker builds you may need to
+Dockerfile](./Dockerfile). Note that in order to run the Docker builds you may need to
 [configure Docker](https://docs.docker.com/engine/install/linux-postinstall/) so
 that it doesn't need to run as root user.
 
