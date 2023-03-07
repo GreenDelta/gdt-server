@@ -5,7 +5,38 @@ protocol. See the [openLCA IPC
 documentation](https://greendelta.github.io/openLCA-ApiDoc/ipc/) for more
 information and examples.
 
-## Building
+## Running as Docker container
+
+A Docker image of the gdt-server can be composed with [this Docker
+file](./Dockerfile); e.g. if you have curl and Docker installed:
+
+```bash
+cd <workdir>
+curl https://raw.githubusercontent.com/GreenDelta/gdt-server/main/Dockerfile \
+  > Dockerfile \
+  && docker build -t gdt-server .
+```
+Then you can run a container in the following way:
+
+```bash
+docker run \
+  -p 3000:8080 \
+  -v $HOME/openLCA-data-1.4:/app/data \
+  --rm -d gdt-server \
+  -db example --readonly
+```
+
+In this example, it will mount the default openLCA workspace to the container,
+use the database `example`, and start the server in readonly mode on port 3000.
+Other server parameters can be passed via this start command as described in the
+openLCA IPC documentation. You can also host static files by mounting a folder
+to the `/app/static` folder:
+
+```
+  -v <your host folder>:/app/static
+```
+
+## Building from source
 
 In order to build the server application, the current version of the openLCA
 Maven modules need to be installed, see
@@ -63,27 +94,6 @@ You can also compile the `depl` tool and run the compiled version:
 ```bash
 dart compile exe depl/main.dart -o depl/depl
 sudo ./depl/depl docker
-```
-
-## Running as Docker container
-
-When you run the server as Docker container, you need to mount a workspace
-folder that contains the database and possible libraries to the `/app/data`
-folder of the container. The name of the database and possible other arguments
-are passed to the container at the end of the command:
-
-```batch
-docker run \
-  -p 3000:8080 \
-  -v $HOME/openLCA-data-1.4:/app/data \
-  --rm -d gdt-server \
-  -db example --readonly
-```
-
-You can also host static files by mounting a folder to the `/app/static` folder:
-
-```
-  -v <your host folder>:/app/static
 ```
 
 ## License

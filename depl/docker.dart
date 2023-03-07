@@ -109,12 +109,13 @@ class _DockerBuild {
     if (config.noImages) {
       return;
     }
+
     print("generate Docker images");
+    var prefix = "ghcr.io/greendelta";
     [
-      ["app.Dockerfile", "gdt-server-app"],
-      ["lib.Dockerfile", "gdt-server-lib"],
-      ["native.Dockerfile", "gdt-server-native"],
-      ["main.Dockerfile", "gdt-server"]
+      ["app.Dockerfile", "${prefix}/gdt-server-app"],
+      ["lib.Dockerfile", "${prefix}/gdt-server-lib"],
+      ["native.Dockerfile", "${prefix}/gdt-server-native"],
     ].forEach((p) {
       var file = p[0];
       var tag = p[1];
@@ -152,7 +153,7 @@ class _DockerBuild {
     _eachLineOf(_docker(["image", "ls"]), (line) {
       if (line.length < 2) return;
       var image = line[0].trim();
-      if (image.startsWith("gdt-server")) {
+      if (image.contains("gdt-server")) {
         print("  delete image ${image}");
         _docker(["image", "rm", image]);
       }
