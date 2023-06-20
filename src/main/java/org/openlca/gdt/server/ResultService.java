@@ -5,6 +5,7 @@ import org.openlca.core.services.EnviFlowId;
 import org.openlca.core.services.JsonResultService;
 import org.openlca.core.services.ServerConfig;
 import org.openlca.core.services.TechFlowId;
+import org.openlca.jsonld.Json;
 
 class ResultService {
 
@@ -184,6 +185,14 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	void getUpstreamInterventionsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var enviFlow = EnviFlowId.parse(ctx.pathParam("envi-flow"));
+		var path = upstreamPathOf(ctx);
+		var r = service.getUpstreamInterventionsOf(id, path, enviFlow);
+		Http.respond(ctx, r);
+	}
+
 	// endregion
 
 	// region: impact results
@@ -295,6 +304,14 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	void getUpstreamImpactsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var impactCategory = ctx.pathParam("impact-category");
+		var path = upstreamPathOf(ctx);
+		var r = service.getUpstreamImpactsOf(id, path, impactCategory);
+		Http.respond(ctx, r);
+	}
+
 	// endregion
 
 	// region: cost results
@@ -338,6 +355,19 @@ class ResultService {
 		Http.respond(ctx, r);
 	}
 
+	void getUpstreamCostsOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var path = upstreamPathOf(ctx);
+		var r = service.getUpstreamCostsOf(id, path);
+		Http.respond(ctx, r);
+	}
+
 	// endregion
 
+	private String upstreamPathOf(Context ctx) {
+		var body = Http.readBodyOf(ctx);
+		if (body == null || !body.isJsonObject())
+			return null;
+		return Json.getString(body.getAsJsonObject(), "path");
+	}
 }

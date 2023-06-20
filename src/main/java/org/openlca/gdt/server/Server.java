@@ -90,6 +90,7 @@ public class Server {
 		app.get("/result/{id}/flow-intensity-of/{envi-flow}/{tech-flow}", results::getFlowIntensityOf);
 		app.get("/result/{id}/total-interventions-of/{tech-flow}", results::getTotalInterventionsOf);
 		app.get("/result/{id}/total-intervention-of/{envi-flow}/{tech-flow}", results::getTotalInterventionOf);
+		app.post("/result/{id}/upstream-interventions-of/{envi-flow}", results::getUpstreamInterventionsOf);
 		// endregion
 
 		// region: impact results
@@ -108,6 +109,7 @@ public class Server {
 		app.get("/result/{id}/impact-factor-of/{impact-category}/{envi-flow}", results::getImpactFactorOf);
 		app.get("/result/{id}/flow-impacts-of/{impact-category}", results::getFlowImpactsOf);
 		app.get("/result/{id}/flow-impact-of/{impact-category}/{envi-flow}", results::getFlowImpactOf);
+		app.post("/result/{id}/upstream-impacts-of/{impact-category}", results::getUpstreamImpactsOf);
 		// endregion
 
 		// region: cost results
@@ -117,6 +119,7 @@ public class Server {
 		app.get("/result/{id}/direct-costs-of/{tech-flow}", results::getDirectCostsOf);
 		app.get("/result/{id}/cost-intensities-of/{tech-flow}", results::getCostIntensitiesOf);
 		app.get("/result/{id}/total-costs-of/{tech-flow}", results::getTotalCostsOf);
+		app.post("/result/{id}/upstream-costs-of", results::getUpstreamCostsOf);
 		// endregion
 
 		// TODO: deprecated `results` routes
