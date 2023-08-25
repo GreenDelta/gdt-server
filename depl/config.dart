@@ -20,16 +20,35 @@ enum Command {
   }
 }
 
+enum Os {
+  linux,
+  macos;
+
+  static Os of(String value) {
+    switch (value.trim().toLowerCase()) {
+      case "linux":
+        return linux;
+      case "macos":
+        return macos;
+      case "mac":
+        return macos;
+      default:
+        return linux;
+    }
+  }
+}
+
 class Config {
   final Command command;
   final Directory buildDir;
+  final Os os;
   final bool readonly;
   final bool noImages;
   final String? imageSuffix;
   final String? database;
   final String? _port;
 
-  Config(this.command, this.buildDir,
+  Config(this.command, this.buildDir, this.os,
       {bool? readonly,
       bool? noImages,
       this.imageSuffix,
@@ -44,11 +63,12 @@ class Config {
 
   static Config parse(List<String> args) {
     var command = Command.of(args);
-    print("run build of type: ${command.name}");
+    print("run command of type: ${command.name}");
 
     // config
     var readonly = false;
     var noImages = false;
+    Os os = Os.linux;
     Directory? dir = null;
     String? suffix = null;
     String? port = null;
@@ -72,6 +92,9 @@ class Config {
       }
       var value = args[i + 1];
       switch (arg) {
+        case "-os":
+          os = Os.of(value);
+          break;
         case "-d":
           dir = _buildDirOf(value);
           break;
@@ -86,7 +109,7 @@ class Config {
     }
     dir = dir != null ? dir : _buildDirOf("build");
     print("build in: ${dir.path}");
-    return Config(command, dir,
+    return Config(command, dir, os,
         imageSuffix: suffix,
         database: _dbOf(dir),
         readonly: readonly,
