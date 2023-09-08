@@ -51,8 +51,7 @@ mvn install -DskipTests=true
 Application packages can be then build with the `depl` tool:
 
 ```bash
-dart pub get -C depl  # resolving dependencies
-dart main.dart -os [<linux/macos>]
+dart depl/main.dart
 ```
 
 This builds the server application in the `build` folder, collects the

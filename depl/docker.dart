@@ -96,14 +96,9 @@ class _DockerBuild {
       }
       f.writeAsStringSync(content);
     };
-
-    var nativeDockerfile = config.os == Os.linux
-        ? "native.Dockerfile"
-        : "native-${config.os.name}.Dockerfile";
-
     mkFile("app.Dockerfile", _app);
     mkFile("lib.Dockerfile", _lib);
-    mkFile(nativeDockerfile, _native);
+    mkFile("native.Dockerfile", _native);
     mkFile("main.Dockerfile", File("Dockerfile").readAsStringSync());
     mkFile("licenses/lib.txt", File("licenses/lib.txt").readAsStringSync());
     mkFile(
@@ -117,13 +112,10 @@ class _DockerBuild {
 
     print("generate Docker images");
     var prefix = "ghcr.io/greendelta";
-    var nativeImage = config.os == Os.linux
-        ? "${prefix}/gdt-server-native"
-        : "${prefix}/gdt-server-native-${config.os.name}";
     [
       ["app.Dockerfile", "${prefix}/gdt-server-app"],
       ["lib.Dockerfile", "${prefix}/gdt-server-lib"],
-      [nativeDockerfile, nativeImage],
+      ["native.Dockerfile", "${prefix}/gdt-server-native"],
     ].forEach((p) {
       var file = p[0];
       var tag = p[1];
