@@ -96,6 +96,7 @@ class _AppBuild {
     if (config.readonly) {
       text += " --readonly";
     }
-    await config.fileOf("run.sh").writeAsString(text + "\n");
+    var file = config.fileOf("run.sh");
+    await file.writeAsString(text + "\n");
   }
 }
