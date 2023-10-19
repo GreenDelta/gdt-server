@@ -364,6 +364,16 @@ class ResultService {
 
 	// endregion
 
+	void getSankeyGraphOf(Context ctx) {
+		var id = ctx.pathParam("id");
+		var body = Http.readBodyOf(ctx);
+		var setup = body != null && body.isJsonObject()
+				? body.getAsJsonObject()
+				: null;
+		var r = service.getSankeyGraph(id, setup);
+		Http.respond(ctx, r);
+	}
+
 	private String upstreamPathOf(Context ctx) {
 		var body = Http.readBodyOf(ctx);
 		if (body == null || !body.isJsonObject())

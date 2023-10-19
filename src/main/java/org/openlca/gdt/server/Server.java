@@ -34,7 +34,7 @@ public class Server {
 				var connector = new ServerConnector(
 						server, new HttpConnectionFactory(httpConfig));
 				connector.setPort(config.port());
-				server.setConnectors(new Connector[] {connector});
+				server.setConnectors(new Connector[]{connector});
 				return server;
 			});
 		}).start();
@@ -121,6 +121,9 @@ public class Server {
 		app.get("/result/{id}/total-costs-of/{tech-flow}", results::getTotalCostsOf);
 		app.post("/result/{id}/upstream-costs-of", results::getUpstreamCostsOf);
 		// endregion
+
+		// Sankey graphs
+		app.post("/result/{id}/sankey", results::getSankeyGraphOf);
 
 		// TODO: deprecated `results` routes
 		// these routes only exists for backwards compatibility with older API
