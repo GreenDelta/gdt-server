@@ -3,25 +3,26 @@ import 'package:path/path.dart' as p;
 import 'config.dart';
 
 const _app = """
-from scratch
-copy gdt-server.jar /app/gdt-server.jar
-copy run.sh /app/run.sh
-copy LICENSE /app/LICENSE
+FROM scratch
+COPY gdt-server.jar /app/gdt-server.jar
+COPY run.sh /app/run.sh
+COPY LICENSE /app/LICENSE
 """;
 
 const _lib = """
-from scratch
-copy lib /app/lib
-copy licenses/lib.txt /app/THIRDPARTY_README
+FROM scratch
+COPY lib /app/lib
+COPY licenses/lib.txt /app/THIRDPARTY_README
 """;
 
 const _native = """
-from scratch
-copy native /app/native
-copy licenses/native.txt /app/THIRDPARTY_README
+FROM scratch
+COPY native /app/native
+COPY licenses/native.txt /app/THIRDPARTY_README
 """;
 
-const _run = """#!/bin/bash
+const _run = """
+#!/bin/bash
 java -jar /app/gdt-server.jar \\
     -data /app/data \\
     -native /app/native \\
@@ -60,12 +61,12 @@ class _DockerBuild {
 
   dbImage() {
     print("generate Docker file");
-    var recipe = "from eclipse-temurin:17-jre\n"
-        "copy gdt-server.jar /app/gdt-server.jar\n"
-        "copy lib /app/lib\n"
-        "copy native /app/native\n"
-        "copy data /app/data\n"
-        'cmd ["java", "-jar", "/app/gdt-server.jar", '
+    var recipe = "FROM eclipse-temurin:17-jre\n"
+        "COPY gdt-server.jar /app/gdt-server.jar\n"
+        "COPY lib /app/lib\n"
+        "COPY native /app/native\n"
+        "COPY data /app/data\n"
+        'CMD ["java", "-jar", "/app/gdt-server.jar", '
         '"-data", "/app/data", '
         '"-db", "${config.database}", '
         '"-native", "/app/native", '

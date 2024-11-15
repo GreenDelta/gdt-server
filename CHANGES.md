@@ -18,4 +18,3 @@
 
 * renamed routes for direct contribution results
 * renamed `results/*` routes to `result/*`
-
