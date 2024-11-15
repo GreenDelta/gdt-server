@@ -1,11 +1,12 @@
-from ghcr.io/greendelta/gdt-server-app as app
-from ghcr.io/greendelta/gdt-server-lib as lib
-from ghcr.io/greendelta/gdt-server-native as native
-from eclipse-temurin:17-jre
+FROM ghcr.io/greendelta/gdt-server-app AS app
+FROM ghcr.io/greendelta/gdt-server-lib AS lib
+FROM ghcr.io/greendelta/gdt-server-native AS native
+FROM eclipse-temurin:17-jre
 
-copy --from=app /app /app
-copy --from=lib /app/lib /app/lib
-copy --from=native /app/native /app/native
+COPY --from=app /app /app
+COPY --from=lib /app/lib /app/lib
+COPY --from=native /app/native /app/native
 
-run chmod +x /app/run.sh
-entrypoint ["/app/run.sh"]
+RUN chmod +x /app/run.sh
+
+ENTRYPOINT ["/app/run.sh"]
