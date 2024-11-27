@@ -20,21 +20,28 @@ Then you can run a container in the following way:
 
 ```bash
 docker run \
-  -p 3000:8080 \
   -v $HOME/openLCA-data-1.4:/app/data \
-  --rm -d gdt-server \
+  -m 4gb -it --rm \
+  gdt-server \
   -db example --readonly
 ```
 
 In this example, it will mount the default openLCA workspace to the container,
-use the database `example`, and start the server in readonly mode on port 3000.
-Other server parameters can be passed via this start command as described in the
-openLCA IPC documentation. You can also host static files by mounting a folder
-to the `/app/static` folder:
+use the database `example`, and start the server in readonly mode on port 8080.
+
+Other server parameters can be passed via this start command as described in
+the openLCA IPC documentation. You can also host static files by mounting a
+folder to the `/app/static` folder:
 
 ```
   -v <your host folder>:/app/static
 ```
+
+### Memory usage
+
+The memory limit of the container can be adjusted to your need. The memory necessary for the server depends on the **database size**, the **number of concurrent users**, the **number of threads** and the result disposable **timeout**.
+
+The maximum percentage of the JVM memory is set to 80%. For the sack of optimization, the default value of the `JAVA_MAX_RAM_PERCENTAGE` environment variable can be set to a higher value. For example, to use 90% of the memory, set the environment variable `-e JAVA_MAX_RAM_PERCENTAGE=90`.
 
 ## Building from source
 
@@ -51,6 +58,7 @@ mvn install -DskipTests=true
 Application packages can be then build with the `depl` tool:
 
 ```bash
+dart pub get --directory ./depl
 dart depl/main.dart
 ```
 
@@ -95,6 +103,34 @@ You can also compile the `depl` tool and run the compiled version:
 dart compile exe depl/main.dart -o depl/depl
 sudo ./depl/depl docker
 ```
+
+## Profile memory usage with Visual VM
+
+Visual VM can be connected to a remote process on a Docker container. The Java process must provide information on one of the container's port (here 9010).
+
+```bash
+docker run \
+  -p 8080:8080 -p 9010:9010 \
+  -v $HOME/openLCA-data-1.4:/app/data \
+  -m 4gb --rm -it \
+  --entrypoint /bin/bash \
+  gdt-server
+java \
+  -Dcom.sun.management.jmxremote \
+  -Dcom.sun.management.jmxremote.port=9010 \
+  -Dcom.sun.management.jmxremote.local.only=false \
+  -Dcom.sun.management.jmxremote.authenticate=false \
+  -Dcom.sun.management.jmxremote.ssl=false \
+  -XX:MaxRAMPercentage=$JAVA_MAX_RAM_PERCENTAGE \
+  -jar /app/gdt-server.jar \
+  -data /app/data \
+  -native /app/native \
+  -static /app/static \
+  -db example \
+  --readonly
+```
+
+Visual VM can connect to this process via *File -> Add JMX connection* on `localhost:9010`.
 
 ## License
 The app layer with the REST API of the gdt-server (e.g. the `gdt-server-app`

@@ -21,13 +21,16 @@ COPY native /app/native
 COPY licenses/native.txt /app/THIRDPARTY_README
 """;
 
+// https://learn.microsoft.com/en-us/azure/developer/java/containers/overview
 const _run = """
 #!/bin/bash
-java -jar /app/gdt-server.jar \\
-    -data /app/data \\
-    -native /app/native \\
-    -static /app/static \\
-    "\$@"
+java \\
+  -XX:MaxRAMPercentage=\$JAVA_MAX_RAM_PERCENTAGE \\
+  -jar /app/gdt-server.jar \\
+  -data /app/data \\
+  -native /app/native \\
+  -static /app/static \\
+  "\$@"
 """;
 
 build(Config config) {
