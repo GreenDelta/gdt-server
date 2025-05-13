@@ -1,7 +1,7 @@
 FROM ghcr.io/greendelta/gdt-server-app AS app
 FROM ghcr.io/greendelta/gdt-server-lib AS lib
 FROM ghcr.io/greendelta/gdt-server-native AS native
-FROM eclipse-temurin:17-jre
+FROM eclipse-temurin:21-jre
 
 ENV JAVA_MAX_RAM_PERCENTAGE=80
 
