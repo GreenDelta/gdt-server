@@ -34,6 +34,8 @@ public class Server {
 				var connector = new ServerConnector(
 						server, new HttpConnectionFactory(httpConfig));
 				connector.setPort(config.port());
+				String useHostConfig = config.args().getOrDefault("-host", "localhost");
+				connector.setHost(useHostConfig);
 				server.setConnectors(new Connector[]{connector});
 				return server;
 			});
