@@ -1,0 +1,16 @@
+FROM ghcr.io/greendelta/gdt-server-native AS native
+FROM eclipse-temurin:21-jre
+
+ENV JAVA_MAX_RAM_PERCENTAGE=80
+
+WORKDIR /app
+
+COPY --from=native /app/native /app/native
+
+COPY startup.sh /app/startup.sh
+COPY target/gdt-server.jar /app/gdt-server.jar
+COPY target/lib /app/lib 
+
+RUN chmod +x startup.sh
+
+ENTRYPOINT ["/app/startup.sh"]
